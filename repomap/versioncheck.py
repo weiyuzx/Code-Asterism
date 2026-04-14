@@ -5,23 +5,23 @@ from pathlib import Path
 
 import packaging.version
 
-import aider
+import repomap
 from repomap import utils
 from repomap.dump import dump  # noqa: F401
 
-VERSION_CHECK_FNAME = Path.home() / ".aider" / "caches" / "versioncheck"
+VERSION_CHECK_FNAME = Path.home() / ".asterism" / "caches" / "versioncheck"
 
 
 def install_from_main_branch(io):
     """
-    Install the latest version of aider from the main branch of the GitHub repository.
+    Install the latest version of asterism from the main branch of the GitHub repository.
     """
 
     return utils.check_pip_install_extra(
         io,
         None,
-        "Install the development version of aider from the main branch?",
-        ["git+https://github.com/Aider-AI/aider.git"],
+        "Install the development version of asterism from the main branch?",
+        ["git+https://github.com/weiyuzx/asterism.git"],
         self_update=True,
     )
 
@@ -75,10 +75,10 @@ def check_version(io, just_check=False, verbose=False):
     import requests
 
     try:
-        response = requests.get("https://pypi.org/pypi/aider-chat/json")
+        response = requests.get("https://pypi.org/pypi/asterism/json")
         data = response.json()
         latest_version = data["info"]["version"]
-        current_version = aider.__version__
+        current_version = repomap.__version__
 
         if just_check or verbose:
             io.tool_output(f"Current version: {current_version}")

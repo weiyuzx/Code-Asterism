@@ -131,7 +131,7 @@ class Coder:
         summarize_from_coder=True,
         **kwargs,
     ):
-        import aider.coders as coders
+        import repomap.coders as coders
 
         if not main_model:
             if from_coder:
@@ -192,6 +192,12 @@ class Coder:
                 res = coder(main_model, io, **kwargs)
                 res.original_kwargs = dict(kwargs)
                 return res
+
+        # Fallback: if no specific coder found and edit_format is None, use base Coder
+        if edit_format is None:
+            res = Coder(main_model, io, **kwargs)
+            res.original_kwargs = dict(kwargs)
+            return res
 
         valid_formats = [
             str(c.edit_format)

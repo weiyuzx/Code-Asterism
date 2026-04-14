@@ -1,6 +1,5 @@
 import difflib
 import hashlib
-import importlib.resources
 import json
 import math
 import os
@@ -140,10 +139,7 @@ class ModelSettings:
 
 # Load model settings from package resource
 MODEL_SETTINGS = []
-with importlib.resources.open_text("aider.resources", "model-settings.yml") as f:
-    model_settings_list = yaml.safe_load(f)
-    for model_settings_dict in model_settings_list:
-        MODEL_SETTINGS.append(ModelSettings(**model_settings_dict))
+# Model settings removed - not needed for repomap functionality
 
 
 class ModelInfoManager:

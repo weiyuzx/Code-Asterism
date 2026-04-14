@@ -498,217 +498,180 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
     args, unknown = parser.parse_known_args(argv)
 
     # Load the .env file specified in the arguments
-    loaded_dotenvs = load_dotenv_files(git_root, args.env_file, args.encoding)
+    # Simplified for repomap - no .env file loading needed
+    loaded_dotenvs = []
+    # loaded_dotenvs = load_dotenv_files(git_root, args.env_file, args.encoding)
 
     # Parse again to include any arguments that might have been defined in .env
     args = parser.parse_args(argv)
 
-    if args.shell_completions:
-        # Ensure parser.prog is set for shtab, though it should be by default
-        parser.prog = "aider"
-        print(shtab.complete(parser, shell=args.shell_completions))
-        sys.exit(0)
+    # Shell completions - removed
+    # if args.shell_completions:
+    #     parser.prog = "asterism"
+    #     print(shtab.complete(parser, shell=args.shell_completions))
+    #     sys.exit(0)
 
     if git is None:
         args.git = False
 
-    if args.analytics_disable:
-        analytics = Analytics(permanently_disable=True)
-        print("Analytics have been permanently disabled.")
+    # Analytics - removed
+    # if args.analytics_disable:
+    #     analytics = Analytics(permanently_disable=True)
+    #     print("Analytics have been permanently disabled.")
 
-    if not args.verify_ssl:
-        import httpx
+    # SSL verification - removed
+    # if not args.verify_ssl:
+    #     import httpx
+    #     os.environ["SSL_VERIFY"] = ""
+    #     litellm._load_litellm()
+    #     litellm._lazy_module.client_session = httpx.Client(verify=False)
+    #     litellm._lazy_module.aclient_session = httpx.AsyncClient(verify=False)
+    #     models.model_info_manager.set_verify_ssl(False)
 
-        os.environ["SSL_VERIFY"] = ""
-        litellm._load_litellm()
-        litellm._lazy_module.client_session = httpx.Client(verify=False)
-        litellm._lazy_module.aclient_session = httpx.AsyncClient(verify=False)
-        # Set verify_ssl on the model_info_manager
-        models.model_info_manager.set_verify_ssl(False)
+    # Timeout - removed
+    # if args.timeout:
+    #     models.request_timeout = args.timeout
 
-    if args.timeout:
-        models.request_timeout = args.timeout
+    # Color modes - removed
+    # if args.dark_mode:
+    #     args.user_input_color = "#32FF32"
+    #     args.tool_error_color = "#FF3333"
+    #     args.tool_warning_color = "#FFFF00"
+    #     args.assistant_output_color = "#00FFFF"
+    #     args.code_theme = "monokai"
+    #
+    # if args.light_mode:
+    #     args.user_input_color = "green"
+    #     args.tool_error_color = "red"
+    #     args.tool_warning_color = "#FFA500"
+    #     args.assistant_output_color = "blue"
+    #     args.code_theme = "default"
 
-    if args.dark_mode:
-        args.user_input_color = "#32FF32"
-        args.tool_error_color = "#FF3333"
-        args.tool_warning_color = "#FFFF00"
-        args.assistant_output_color = "#00FFFF"
-        args.code_theme = "monokai"
+    # Editing mode - removed
+    # if return_coder and args.yes_always is None:
+    #     args.yes_always = True
+    #
+    # editing_mode = EditingMode.VI if args.vim else EditingMode.EMACS
 
-    if args.light_mode:
-        args.user_input_color = "green"
-        args.tool_error_color = "red"
-        args.tool_warning_color = "#FFA500"
-        args.assistant_output_color = "blue"
-        args.code_theme = "default"
-
-    if return_coder and args.yes_always is None:
-        args.yes_always = True
-
-    editing_mode = EditingMode.VI if args.vim else EditingMode.EMACS
-
-    def get_io(pretty):
+    def get_io(pretty=True):
         return InputOutput(
-            pretty,
-            args.yes_always,
-            args.input_history_file,
-            args.chat_history_file,
+            pretty=pretty,
+            yes=True,  # Default for repomap
             input=input,
             output=output,
-            user_input_color=args.user_input_color,
-            tool_output_color=args.tool_output_color,
-            tool_warning_color=args.tool_warning_color,
-            tool_error_color=args.tool_error_color,
-            completion_menu_color=args.completion_menu_color,
-            completion_menu_bg_color=args.completion_menu_bg_color,
-            completion_menu_current_color=args.completion_menu_current_color,
-            completion_menu_current_bg_color=args.completion_menu_current_bg_color,
-            assistant_output_color=args.assistant_output_color,
-            code_theme=args.code_theme,
-            dry_run=args.dry_run,
-            encoding=args.encoding,
-            line_endings=args.line_endings,
-            llm_history_file=args.llm_history_file,
-            editingmode=editing_mode,
-            fancy_input=args.fancy_input,
-            multiline_mode=args.multiline,
-            notifications=args.notifications,
-            notifications_command=args.notifications_command,
+            encoding=args.encoding if hasattr(args, 'encoding') else 'utf-8',
         )
 
-    io = get_io(args.pretty)
-    try:
-        io.rule()
-    except UnicodeEncodeError as err:
-        if not io.pretty:
-            raise err
-        io = get_io(False)
-        io.tool_warning("Terminal does not support pretty output (UnicodeDecodeError)")
+    io = get_io(True)  # Enable pretty output for repomap
 
-    # Process any environment variables set via --set-env
-    if args.set_env:
-        for env_setting in args.set_env:
-            try:
-                name, value = env_setting.split("=", 1)
-                os.environ[name.strip()] = value.strip()
-            except ValueError:
-                io.tool_error(f"Invalid --set-env format: {env_setting}")
-                io.tool_output("Format should be: ENV_VAR_NAME=value")
-                return 1
+    # Environment variables and API keys - removed (not needed for repomap)
+    # if args.set_env:
+    #     for env_setting in args.set_env:
+    #         try:
+    #             name, value = env_setting.split("=", 1)
+    #             os.environ[name.strip()] = value.strip()
+    #         except ValueError:
+    #             io.tool_error(f"Invalid --set-env format: {env_setting}")
+    #             io.tool_output("Format should be: ENV_VAR_NAME=value")
+    #             return 1
+    #
+    # # Process any API keys set via --api-key
+    # if args.api_key:
+    #     for api_setting in args.api_key:
+    #         try:
+    #             provider, key = api_setting.split("=", 1)
+    #             env_var = f"{provider.strip().upper()}_API_KEY"
+    #             os.environ[env_var] = key.strip()
+    #         except ValueError:
+    #             io.tool_error(f"Invalid --api-key format: {api_setting}")
+    #             io.tool_output("Format should be: provider=key")
+    #             return 1
 
-    # Process any API keys set via --api-key
-    if args.api_key:
-        for api_setting in args.api_key:
-            try:
-                provider, key = api_setting.split("=", 1)
-                env_var = f"{provider.strip().upper()}_API_KEY"
-                os.environ[env_var] = key.strip()
-            except ValueError:
-                io.tool_error(f"Invalid --api-key format: {api_setting}")
-                io.tool_output("Format should be: provider=key")
-                return 1
+    # API key handling removed - not needed for repomap functionality
+    # if args.anthropic_api_key:
+    #     os.environ["ANTHROPIC_API_KEY"] = args.anthropic_api_key
+    # if args.openai_api_key:
+    #     os.environ["OPENAI_API_KEY"] = args.openai_api_key
 
-    if args.anthropic_api_key:
-        os.environ["ANTHROPIC_API_KEY"] = args.anthropic_api_key
+    # Handle deprecated model shortcut args - removed
+    # handle_deprecated_model_args(args, io)
 
-    if args.openai_api_key:
-        os.environ["OPENAI_API_KEY"] = args.openai_api_key
+    # OpenAI API settings - removed
+    # if args.openai_api_base:
+    #     os.environ["OPENAI_API_BASE"] = args.openai_api_base
+    # if args.openai_api_version:
+    #     io.tool_warning(
+    #         "--openai-api-version is deprecated, use --set-env OPENAI_API_VERSION=<value>"
+    #     )
+    #     os.environ["OPENAI_API_VERSION"] = args.openai_api_version
+    # if args.openai_api_type:
+    #     io.tool_warning("--openai-api-type is deprecated, use --set-env OPENAI_API_TYPE=<value>")
+    #     os.environ["OPENAI_API_TYPE"] = args.openai_api_type
+    # if args.openai_organization_id:
+    #     io.tool_warning(
+    #         "--openai-organization-id is deprecated, use --set-env OPENAI_ORGANIZATION=<value>"
+    #     )
+    #     os.environ["OPENAI_ORGANIZATION"] = args.openai_organization_id
 
-    # Handle deprecated model shortcut args
-    handle_deprecated_model_args(args, io)
-    if args.openai_api_base:
-        os.environ["OPENAI_API_BASE"] = args.openai_api_base
-    if args.openai_api_version:
-        io.tool_warning(
-            "--openai-api-version is deprecated, use --set-env OPENAI_API_VERSION=<value>"
-        )
-        os.environ["OPENAI_API_VERSION"] = args.openai_api_version
-    if args.openai_api_type:
-        io.tool_warning("--openai-api-type is deprecated, use --set-env OPENAI_API_TYPE=<value>")
-        os.environ["OPENAI_API_TYPE"] = args.openai_api_type
-    if args.openai_organization_id:
-        io.tool_warning(
-            "--openai-organization-id is deprecated, use --set-env OPENAI_ORGANIZATION=<value>"
-        )
-        os.environ["OPENAI_ORGANIZATION"] = args.openai_organization_id
+    # Analytics - disabled for repomap
+    analytics = None
+    # analytics = Analytics(
+    #     logfile=args.analytics_log,
+    #     permanently_disable=args.analytics_disable,
+    #     posthog_host=args.analytics_posthog_host,
+    #     posthog_project_api_key=args.analytics_posthog_project_api_key,
+    # )
+    # if args.analytics is not False:
+    #     if analytics.need_to_ask(args.analytics):
+    #         io.tool_output(
+    #             "Aider respects your privacy and never collects your code, chat messages, keys or"
+    #             " personal info."
+    #         )
+    #         io.tool_output(f"For more info: {urls.analytics}")
+    #         disable = not io.confirm_ask(
+    #             "Allow collection of anonymous analytics to help improve aider?"
+    #         )
 
-    analytics = Analytics(
-        logfile=args.analytics_log,
-        permanently_disable=args.analytics_disable,
-        posthog_host=args.analytics_posthog_host,
-        posthog_project_api_key=args.analytics_posthog_project_api_key,
-    )
-    if args.analytics is not False:
-        if analytics.need_to_ask(args.analytics):
-            io.tool_output(
-                "Aider respects your privacy and never collects your code, chat messages, keys or"
-                " personal info."
-            )
-            io.tool_output(f"For more info: {urls.analytics}")
-            disable = not io.confirm_ask(
-                "Allow collection of anonymous analytics to help improve aider?"
-            )
-
-            analytics.asked_opt_in = True
-            if disable:
-                analytics.disable(permanently=True)
-                io.tool_output("Analytics have been permanently disabled.")
-
-            analytics.save_data()
-            io.tool_output()
-
-        # This is a no-op if the user has opted out
-        analytics.enable()
-
-    analytics.event("launched")
-
-    if args.gui and not return_coder:
-        if not check_streamlit_install(io):
-            analytics.event("exit", reason="Streamlit not installed")
-            return
-        analytics.event("gui session")
-        launch_gui(argv)
-        analytics.event("exit", reason="GUI session ended")
-        return
+    #         analytics.asked_opt_in = True
+    #         if disable:
+    #             analytics.disable(permanently=True)
+    #             io.tool_output("Analytics have been permanently disabled.")
+    #
+    #         analytics.save_data()
+    #         io.tool_output()
+    #
+    #     # This is a no-op if the user has opted out
+    #     analytics.enable()
+    #
+    # analytics.event("launched")
+    #
+    # if args.gui and not return_coder:
+    #     if not check_streamlit_install(io):
+    #         analytics.event("exit", reason="Streamlit not installed")
+    #         return
+    #     analytics.event("gui session")
+    #     launch_gui(argv)
+    #     analytics.event("exit", reason="GUI session ended")
+    #     return
 
     if args.verbose:
         for fname in loaded_dotenvs:
             io.tool_output(f"Loaded {fname}")
 
-    all_files = args.files + (args.file or [])
+    # File handling for repomap
+    all_files = args.files or []
     fnames = [str(Path(fn).resolve()) for fn in all_files]
-    read_only_fnames = []
-    for fn in args.read or []:
-        path = Path(fn).expanduser().resolve()
-        if path.is_dir():
-            read_only_fnames.extend(str(f) for f in path.rglob("*") if f.is_file())
-        else:
-            read_only_fnames.append(str(path))
+    read_only_fnames = []  # Not needed for repomap
 
-    if len(all_files) > 1:
-        good = True
-        for fname in all_files:
-            if Path(fname).is_dir():
-                io.tool_error(f"{fname} is a directory, not provided alone.")
-                good = False
-        if not good:
-            io.tool_output(
-                "Provide either a single directory of a git repo, or a list of one or more files."
-            )
-            analytics.event("exit", reason="Invalid directory input")
-            return 1
+    # Directory validation - removed for repomap
+    # if len(all_files) > 1:
+    #     ...validation code...
 
     git_dname = None
-    if len(all_files) == 1:
-        if Path(all_files[0]).is_dir():
-            if args.git:
-                git_dname = str(Path(all_files[0]).resolve())
-                fnames = []
-            else:
-                io.tool_error(f"{all_files[0]} is a directory, but --no-git selected.")
-                analytics.event("exit", reason="Directory with --no-git")
-                return 1
+    if len(all_files) == 1 and Path(all_files[0]).is_dir():
+        if args.git:  # args.git doesn't exist, set default
+            git_dname = str(Path(all_files[0]).resolve())
+            fnames = []
 
     # We can't know the git repo for sure until after parsing the args.
     # If we guessed wrong, reparse because that changes things like
@@ -716,161 +679,227 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
     if args.git and not force_git_root and git is not None:
         right_repo_root = guessed_wrong_repo(io, git_root, fnames, git_dname)
         if right_repo_root:
-            analytics.event("exit", reason="Recursing with correct repo")
+            # analytics.event("exit", reason="Recursing with correct repo")
             return main(argv, input, output, right_repo_root, return_coder=return_coder)
 
-    if args.just_check_update:
-        update_available = check_version(io, just_check=True, verbose=args.verbose)
-        analytics.event("exit", reason="Just checking update")
-        return 0 if not update_available else 1
-
-    if args.install_main_branch:
-        success = install_from_main_branch(io)
-        analytics.event("exit", reason="Installed main branch")
-        return 0 if success else 1
-
-    if args.upgrade:
-        success = install_upgrade(io)
-        analytics.event("exit", reason="Upgrade completed")
-        return 0 if success else 1
-
-    if args.check_update:
-        check_version(io, verbose=args.verbose)
+    # Version checking - removed
+    # if args.just_check_update:
+    #     update_available = check_version(io, just_check=True, verbose=args.verbose)
+    #     analytics.event("exit", reason="Just checking update")
+    #     return 0 if not update_available else 1
+    #
+    # if args.install_main_branch:
+    #     success = install_from_main_branch(io)
+    #     analytics.event("exit", reason="Installed main branch")
+    #     return 0 if success else 1
+    #
+    # if args.upgrade:
+    #     success = install_upgrade(io)
+    #     analytics.event("exit", reason="Upgrade completed")
+    #     return 0 if success else 1
+    #
+    # if args.check_update:
+    #     check_version(io, verbose=args.verbose)
 
     if args.git:
         git_root = setup_git(git_root, io)
-        if args.gitignore:
-            check_gitignore(git_root, io)
+        # gitignore checking removed
+        # if args.gitignore:
+        #     check_gitignore(git_root, io)
 
     if args.verbose:
-        show = format_settings(parser, args)
-        io.tool_output(show)
+        # show = format_settings(parser, args)
+        # io.tool_output(show)
+        pass  # format_settings not needed for repomap
 
     cmd_line = " ".join(sys.argv)
-    cmd_line = scrub_sensitive_info(args, cmd_line)
+    # cmd_line = scrub_sensitive_info(args, cmd_line)
     io.tool_output(cmd_line, log_only=True)
 
-    is_first_run = is_first_run_of_new_version(io, verbose=args.verbose)
-    check_and_load_imports(io, is_first_run, verbose=args.verbose)
+    # Version checking and imports - removed
+    # is_first_run = is_first_run_of_new_version(io, verbose=args.verbose)
+    # check_and_load_imports(io, is_first_run, verbose=args.verbose)
+    #
+    # register_models(git_root, args.model_settings_file, io, verbose=args.verbose)
+    # register_litellm_models(git_root, args.model_metadata_file, io, verbose=args.verbose)
+    #
+    # if args.list_models:
+    #     models.print_matching_models(io, args.list_models)
+    #     analytics.event("exit", reason="Listed models")
+    #     return 0
 
-    register_models(git_root, args.model_settings_file, io, verbose=args.verbose)
-    register_litellm_models(git_root, args.model_metadata_file, io, verbose=args.verbose)
+    # Command line aliases - removed
+    # if args.alias:
+    #     for alias_def in args.alias:
+    #         # Split on first colon only
+    #         parts = alias_def.split(":", 1)
+    #         if len(parts) != 2:
+    #             io.tool_error(f"Invalid alias format: {alias_def}")
+    #             io.tool_output("Format should be: alias:model-name")
+    #             analytics.event("exit", reason="Invalid alias format error")
+    #             return 1
+    #         alias, model = parts
+    #         models.MODEL_ALIASES[alias.strip()] = model.strip()
 
-    if args.list_models:
-        models.print_matching_models(io, args.list_models)
-        analytics.event("exit", reason="Listed models")
-        return 0
+    # Default model selection - removed
+    selected_model_name = args.model  # Use provided model or None
+    # if not selected_model_name:
+    #     # Error message and analytics event are handled within select_default_model
+    #     # It might have already offered OAuth if no model/keys were found.
+    #     # If it failed here, we exit.
+    #     return 1
+    # args.model = selected_model_name  # Update args with the selected model
 
-    # Process any command line aliases
-    if args.alias:
-        for alias_def in args.alias:
-            # Split on first colon only
-            parts = alias_def.split(":", 1)
-            if len(parts) != 2:
-                io.tool_error(f"Invalid alias format: {alias_def}")
-                io.tool_output("Format should be: alias:model-name")
-                analytics.event("exit", reason="Invalid alias format error")
-                return 1
-            alias, model = parts
-            models.MODEL_ALIASES[alias.strip()] = model.strip()
+    # OpenRouter API key check - removed
+    # if args.model.startswith("openrouter/") and not os.environ.get("OPENROUTER_API_KEY"):
+    #     io.tool_warning(
+    #         f"The specified model '{args.model}' requires an OpenRouter API key, which was not"
+    #         " found."
+    #     )
+    #     # Attempt OAuth flow because the specific model needs it
+    #     if offer_openrouter_oauth(io, analytics):
+    #         # OAuth succeeded, the key should now be in os.environ.
+    #         # Check if the key is now present after the flow.
+    #         if os.environ.get("OPENROUTER_API_KEY"):
+    #             io.tool_output(
+    #                 "OpenRouter successfully connected."
+    #             )  # Inform user connection worked
+    #         else:
+    #             # This case should ideally not happen if offer_openrouter_oauth succeeded
+    #             # but check defensively.
+    #             io.tool_error(
+    #                 "OpenRouter authentication seemed successful, but the key is still missing."
+    #             )
+    #             analytics.event(
+    #                 "exit",
+    #                 reason="OpenRouter key missing after successful OAuth for specified model",
+    #             )
+    #             return 1
+    #     else:
+    #         # OAuth failed or was declined by the user
+    #         io.tool_error(
+    #             f"Unable to proceed without an OpenRouter API key for model '{args.model}'."
+    #         )
+    #         io.offer_url(urls.models_and_keys, "Open documentation URL for more info?")
+    #         analytics.event(
+    #             "exit",
+    #             reason="OpenRouter key missing for specified model and OAuth failed/declined",
+    #         )
+    #         return 1
 
-    selected_model_name = select_default_model(args, io, analytics)
-    if not selected_model_name:
-        # Error message and analytics event are handled within select_default_model
-        # It might have already offered OAuth if no model/keys were found.
-        # If it failed here, we exit.
-        return 1
-    args.model = selected_model_name  # Update args with the selected model
-
-    # Check if an OpenRouter model was selected/specified but the key is missing
-    if args.model.startswith("openrouter/") and not os.environ.get("OPENROUTER_API_KEY"):
-        io.tool_warning(
-            f"The specified model '{args.model}' requires an OpenRouter API key, which was not"
-            " found."
+    # Create minimal model for repomap (no LLM needed)
+    if args.model:
+        main_model = models.Model(
+            args.model,
+            weak_model=None,  # Not needed for repomap
+            editor_model=None,  # Not needed for repomap
+            editor_edit_format=None,  # Not needed for repomap
+            verbose=args.verbose,
         )
-        # Attempt OAuth flow because the specific model needs it
-        if offer_openrouter_oauth(io, analytics):
-            # OAuth succeeded, the key should now be in os.environ.
-            # Check if the key is now present after the flow.
-            if os.environ.get("OPENROUTER_API_KEY"):
-                io.tool_output(
-                    "OpenRouter successfully connected."
-                )  # Inform user connection worked
-            else:
-                # This case should ideally not happen if offer_openrouter_oauth succeeded
-                # but check defensively.
-                io.tool_error(
-                    "OpenRouter authentication seemed successful, but the key is still missing."
-                )
-                analytics.event(
-                    "exit",
-                    reason="OpenRouter key missing after successful OAuth for specified model",
-                )
-                return 1
-        else:
-            # OAuth failed or was declined by the user
-            io.tool_error(
-                f"Unable to proceed without an OpenRouter API key for model '{args.model}'."
-            )
-            io.offer_url(urls.models_and_keys, "Open documentation URL for more info?")
-            analytics.event(
-                "exit",
-                reason="OpenRouter key missing for specified model and OAuth failed/declined",
-            )
-            return 1
+    else:
+        # Create a minimal mock model
+        class MinimalModel:
+            def __init__(self):
+                self.name = "minimal"
+                self.info = {"max_input_tokens": 128000}  # Default large value
+                self.edit_format = "ask"  # Use "ask" to match AskCoder
+                self.use_repo_map = True
+                self.max_chat_history_tokens = 128000
+                # Use accurate token counting with litellm
+                self.token_count = self._token_count
+                self.reasoning_tag = None  # No reasoning for repomap
+                self.streaming = True  # Support streaming
+                self.thinking_tokens = 0  # No thinking tokens
+                self.reasoning_effort = None  # No reasoning effort
+                self.caches_by_default = False  # No caching
+                # Add missing ModelSettings attributes
+                self.weak_model_name = None
+                self.send_undo_reply = False
+                self.lazy = False
+                self.overeager = False
+                self.reminder = "user"
+                self.examples_as_sys_msg = False
+                self.extra_params = None
+                self.cache_control = False
+                self.use_system_prompt = True
+                self.use_temperature = True
+                self.editor_model_name = None
+                self.editor_edit_format = None
+                self.remove_reasoning = None
+                self.system_prompt_prefix = None
+                self.accepts_settings = []  # Empty list for minimal model
 
-    main_model = models.Model(
-        args.model,
-        weak_model=args.weak_model,
-        editor_model=args.editor_model,
-        editor_edit_format=args.editor_edit_format,
-        verbose=args.verbose,
-    )
+            def _token_count(self, text):
+                """Accurate token counting using litellm."""
+                if not text:
+                    return 0
+                try:
+                    # Use litellm.token_counter for accurate counting
+                    # Use a generic model name that should work with litellm
+                    return litellm.token_counter(model="gpt-4o", text=text)
+                except Exception as e:
+                    # Fallback to character-based estimation if litellm fails
+                    # Approx 4 characters per token for code
+                    return len(text) // 4
 
+            def commit_message_models(self):
+                return [self]
+            def weak_model(self):
+                # Return self instead of self for repomap
+                return self
+            def get_repo_map_tokens(self):
+                map_tokens = 1024
+                max_inp_tokens = self.info.get("max_input_tokens")
+                if max_inp_tokens:
+                    map_tokens = max_inp_tokens / 8
+                    map_tokens = min(map_tokens, 4096)
+                    map_tokens = max(map_tokens, 1024)
+                return map_tokens
+            def get_thinking_tokens(self):
+                return self.thinking_tokens
+            def get_reasoning_effort(self):
+                return self.reasoning_effort
+
+        main_model = MinimalModel()
+
+    # Model settings checks - removed (not needed for repomap)
     # Check if deprecated remove_reasoning is set
-    if main_model.remove_reasoning is not None:
-        io.tool_warning(
-            "Model setting 'remove_reasoning' is deprecated, please use 'reasoning_tag' instead."
-        )
+    # if main_model.remove_reasoning is not None:
+    #     io.tool_warning(
+    #         "Model setting 'remove_reasoning' is deprecated, please use 'reasoning_tag' instead."
+    #     )
+    #
+    # # Set reasoning effort and thinking tokens if specified
+    # if args.reasoning_effort is not None:
+    #     ...
+    #
+    # if args.thinking_tokens is not None:
+    #     ...
+    #
+    # # Show warnings about unsupported settings that are being ignored
+    # if args.check_model_accepts_settings:
+    #     settings_to_check = [
+    #         {"arg": args.reasoning_effort, "name": "reasoning_effort"},
+    #         {"arg": args.thinking_tokens, "name": "thinking_tokens"},
+    #     ]
+    #
+    #     for setting in settings_to_check:
+    #         if setting["arg"] is not None and (
+    #             not main_model.accepts_settings
+    #             or setting["name"] not in main_model.accepts_settings
+    #         ):
+    #             io.tool_warning(
+    #                 f"Warning: {main_model.name} does not support '{setting['name']}', ignoring."
+    #             )
+    #             io.tool_output(
+    #                 f"Use --no-check-model-accepts-settings to force the '{setting['name']}'"
+    #                 " setting."
+    #             )
 
-    # Set reasoning effort and thinking tokens if specified
-    if args.reasoning_effort is not None:
-        # Apply if check is disabled or model explicitly supports it
-        if not args.check_model_accepts_settings or (
-            main_model.accepts_settings and "reasoning_effort" in main_model.accepts_settings
-        ):
-            main_model.set_reasoning_effort(args.reasoning_effort)
-
-    if args.thinking_tokens is not None:
-        # Apply if check is disabled or model explicitly supports it
-        if not args.check_model_accepts_settings or (
-            main_model.accepts_settings and "thinking_tokens" in main_model.accepts_settings
-        ):
-            main_model.set_thinking_tokens(args.thinking_tokens)
-
-    # Show warnings about unsupported settings that are being ignored
-    if args.check_model_accepts_settings:
-        settings_to_check = [
-            {"arg": args.reasoning_effort, "name": "reasoning_effort"},
-            {"arg": args.thinking_tokens, "name": "thinking_tokens"},
-        ]
-
-        for setting in settings_to_check:
-            if setting["arg"] is not None and (
-                not main_model.accepts_settings
-                or setting["name"] not in main_model.accepts_settings
-            ):
-                io.tool_warning(
-                    f"Warning: {main_model.name} does not support '{setting['name']}', ignoring."
-                )
-                io.tool_output(
-                    f"Use --no-check-model-accepts-settings to force the '{setting['name']}'"
-                    " setting."
-                )
-
-    if args.copy_paste and args.edit_format is None:
-        if main_model.edit_format in ("diff", "whole", "diff-fenced"):
-            main_model.edit_format = "editor-" + main_model.edit_format
+    # Copy-paste mode - removed
+    # if args.copy_paste and args.edit_format is None:
+    #     if main_model.edit_format in ("diff", "whole", "diff-fenced"):
+    #         main_model.edit_format = "editor-" + main_model.edit_format
 
     if args.verbose:
         io.tool_output("Model metadata:")
@@ -882,23 +911,24 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
             val = json.dumps(val, indent=4)
             io.tool_output(f"{attr.name}: {val}")
 
-    lint_cmds = parse_lint_cmds(args.lint_cmd, io)
-    if lint_cmds is None:
-        analytics.event("exit", reason="Invalid lint command format")
-        return 1
-
-    if args.show_model_warnings:
-        problem = models.sanity_check_models(io, main_model)
-        if problem:
-            analytics.event("model warning", main_model=main_model)
-            io.tool_output("You can skip this check with --no-show-model-warnings")
-
-            try:
-                io.offer_url(urls.model_warnings, "Open documentation url for more info?")
-                io.tool_output()
-            except KeyboardInterrupt:
-                analytics.event("exit", reason="Keyboard interrupt during model warnings")
-                return 1
+    # Lint commands and model warnings - removed
+    # lint_cmds = parse_lint_cmds(args.lint_cmd, io)
+    # if lint_cmds is None:
+    #     analytics.event("exit", reason="Invalid lint command format")
+    #     return 1
+    #
+    # if args.show_model_warnings:
+    #     problem = models.sanity_check_models(io, main_model)
+    #     if problem:
+    #         analytics.event("model warning", main_model=main_model)
+    #         io.tool_output("You can skip this check with --no-show-model-warnings")
+    #
+    #         try:
+    #             io.offer_url(urls.model_warnings, "Open documentation url for more info?")
+    #             io.tool_output()
+    #         except KeyboardInterrupt:
+    #             analytics.event("exit", reason="Keyboard interrupt during model warnings")
+    #             return 1
 
     repo = None
     if args.git:
@@ -909,57 +939,59 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
                 git_dname,
                 args.aiderignore,
                 models=main_model.commit_message_models(),
-                attribute_author=args.attribute_author,
-                attribute_committer=args.attribute_committer,
-                attribute_commit_message_author=args.attribute_commit_message_author,
-                attribute_commit_message_committer=args.attribute_commit_message_committer,
-                commit_prompt=args.commit_prompt,
+                # attribute_author=args.attribute_author,
+                # attribute_committer=args.attribute_committer,
+                # attribute_commit_message_author=args.attribute_commit_message_author,
+                # attribute_commit_message_committer=args.attribute_commit_message_committer,
+                # commit_prompt=args.commit_prompt,
                 subtree_only=args.subtree_only,
-                git_commit_verify=args.git_commit_verify,
-                attribute_co_authored_by=args.attribute_co_authored_by,  # Pass the arg
+                # git_commit_verify=args.git_commit_verify,
+                # attribute_co_authored_by=args.attribute_co_authored_by,
             )
         except FileNotFoundError:
             pass
 
-    if not args.skip_sanity_check_repo:
-        if not sanity_check_repo(repo, io):
-            analytics.event("exit", reason="Repository sanity check failed")
-            return 1
+    # if not args.skip_sanity_check_repo:
+    #     if not sanity_check_repo(repo, io):
+    #         analytics.event("exit", reason="Repository sanity check failed")
+    #         return 1
 
-    if repo and not args.skip_sanity_check_repo:
-        num_files = len(repo.get_tracked_files())
-        analytics.event("repo", num_files=num_files)
-    else:
-        analytics.event("no-repo")
+    # if repo and not args.skip_sanity_check_repo:
+    #     num_files = len(repo.get_tracked_files())
+    #     analytics.event("repo", num_files=num_files)
+    # else:
+    #     analytics.event("no-repo")
 
     commands = Commands(
         io,
         None,
-        voice_language=args.voice_language,
-        voice_input_device=args.voice_input_device,
-        voice_format=args.voice_format,
-        verify_ssl=args.verify_ssl,
-        args=args,
-        parser=parser,
-        verbose=args.verbose,
-        editor=args.editor,
-        original_read_only_fnames=read_only_fnames,
+        # voice_language=args.voice_language,
+        # voice_input_device=args.voice_input_device,
+        # voice_format=args.voice_format,
+        # verify_ssl=args.verify_ssl,
+        # args=args,
+        # parser=parser,
+        # verbose=args.verbose,
+        # editor=args.editor,
+        # original_read_only_fnames=read_only_fnames,
     )
 
     summarizer = ChatSummary(
-        [main_model.weak_model, main_model],
-        args.max_chat_history_tokens or main_model.max_chat_history_tokens,
+        # [main_model.weak_model, main_model],
+        [main_model, main_model],
+        # args.max_chat_history_tokens or main_model.max_chat_history_tokens,
+        128000,
     )
 
-    if args.cache_prompts and args.map_refresh == "auto":
-        args.map_refresh = "files"
+    # if args.cache_prompts and args.map_refresh == "auto":
+    #     args.map_refresh = "files"
 
-    if not main_model.streaming:
-        if args.stream:
-            io.tool_warning(
-                f"Warning: Streaming is not supported by {main_model.name}. Disabling streaming."
-            )
-        args.stream = False
+    # if not main_model.streaming:
+    #     if args.stream:
+    #         io.tool_warning(
+    #             f"Warning: Streaming is not supported by {main_model.name}. Disabling streaming."
+    #         )
+    #     args.stream = False
 
     if args.map_tokens is None:
         map_tokens = main_model.get_repo_map_tokens()
@@ -967,52 +999,52 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
         map_tokens = args.map_tokens
 
     # Track auto-commits configuration
-    analytics.event("auto_commits", enabled=bool(args.auto_commits))
+    # analytics.event("auto_commits", enabled=bool(args.auto_commits))
 
     try:
         coder = Coder.create(
             main_model=main_model,
-            edit_format=args.edit_format,
+            edit_format=None,  # Use default
             io=io,
             repo=repo,
             fnames=fnames,
-            read_only_fnames=read_only_fnames,
-            show_diffs=args.show_diffs,
-            auto_commits=args.auto_commits,
-            dirty_commits=args.dirty_commits,
-            dry_run=args.dry_run,
+            # read_only_fnames=read_only_fnames,
+            # show_diffs=args.show_diffs,
+            # auto_commits=args.auto_commits,
+            # dirty_commits=args.dirty_commits,
+            # dry_run=args.dry_run,
             map_tokens=map_tokens,
             verbose=args.verbose,
-            stream=args.stream,
+            # stream=args.stream,
             use_git=args.git,
-            restore_chat_history=args.restore_chat_history,
-            auto_lint=args.auto_lint,
-            auto_test=args.auto_test,
-            lint_cmds=lint_cmds,
-            test_cmd=args.test_cmd,
+            # restore_chat_history=args.restore_chat_history,
+            # auto_lint=args.auto_lint,
+            # auto_test=args.auto_test,
+            # lint_cmds=lint_cmds,
+            # test_cmd=args.test_cmd,
             commands=commands,
             summarizer=summarizer,
-            analytics=analytics,
-            map_refresh=args.map_refresh,
-            cache_prompts=args.cache_prompts,
+            # analytics=analytics,
+            # map_refresh=args.map_refresh,
+            # cache_prompts=args.cache_prompts,
             map_mul_no_files=args.map_multiplier_no_files,
-            num_cache_warming_pings=args.cache_keepalive_pings,
-            suggest_shell_commands=args.suggest_shell_commands,
-            chat_language=args.chat_language,
-            commit_language=args.commit_language,
-            detect_urls=args.detect_urls,
-            auto_copy_context=args.copy_paste,
-            auto_accept_architect=args.auto_accept_architect,
+            # num_cache_warming_pings=args.cache_keepalive_pings,
+            # suggest_shell_commands=args.suggest_shell_commands,
+            # chat_language=args.chat_language,
+            # commit_language=args.commit_language,
+            # detect_urls=args.detect_urls,
+            # auto_copy_context=args.copy_paste,
+            # auto_accept_architect=args.auto_accept_architect,
             add_gitignore_files=args.add_gitignore_files,
         )
     except UnknownEditFormat as err:
         io.tool_error(str(err))
         io.offer_url(urls.edit_formats, "Open documentation about edit formats?")
-        analytics.event("exit", reason="Unknown edit format")
+        # analytics.event("exit", reason="Unknown edit format")
         return 1
     except ValueError as err:
         io.tool_error(str(err))
-        analytics.event("exit", reason="ValueError during coder creation")
+        # analytics.event("exit", reason="ValueError during coder creation")
         return 1
 
     if return_coder:
@@ -1025,58 +1057,58 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
     if args.aiderignore:
         ignores.append(args.aiderignore)
 
-    if args.watch_files:
-        file_watcher = FileWatcher(
-            coder,
-            gitignores=ignores,
-            verbose=args.verbose,
-            analytics=analytics,
-            root=str(Path.cwd()) if args.subtree_only else None,
-        )
-        coder.file_watcher = file_watcher
+    # if args.watch_files:
+    #     file_watcher = FileWatcher(
+    #         coder,
+    #         gitignores=ignores,
+    #         verbose=args.verbose,
+    #         analytics=analytics,
+    #         root=str(Path.cwd()) if args.subtree_only else None,
+    #     )
+    #     coder.file_watcher = file_watcher
 
-    if args.copy_paste:
-        analytics.event("copy-paste mode")
-        ClipboardWatcher(coder.io, verbose=args.verbose)
+    # if args.copy_paste:
+    #     analytics.event("copy-paste mode")
+    #     ClipboardWatcher(coder.io, verbose=args.verbose)
 
-    coder.show_announcements()
+    # coder.show_announcements()  # Not needed for repomap
 
-    if args.show_prompts:
-        coder.cur_messages += [
-            dict(role="user", content="Hello!"),
-        ]
-        messages = coder.format_messages().all_messages()
-        utils.show_messages(messages)
-        analytics.event("exit", reason="Showed prompts")
-        return
+    # if args.show_prompts:
+    #     coder.cur_messages += [
+    #         dict(role="user", content="Hello!"),
+    #     ]
+    #     messages = coder.format_messages().all_messages()
+    #     utils.show_messages(messages)
+    #     analytics.event("exit", reason="Showed prompts")
+    #     return
 
-    if args.lint:
-        coder.commands.cmd_lint(fnames=fnames)
+    # if args.lint:
+    #     coder.commands.cmd_lint(fnames=fnames)
 
-    if args.test:
-        if not args.test_cmd:
-            io.tool_error("No --test-cmd provided.")
-            analytics.event("exit", reason="No test command provided")
-            return 1
-        coder.commands.cmd_test(args.test_cmd)
-        if io.placeholder:
-            coder.run(io.placeholder)
+    # if args.test:
+    #     if not args.test_cmd:
+    #         io.tool_error("No --test-cmd provided.")
+    #         analytics.event("exit", reason="No test command provided")
+    #         return 1
+    #     coder.commands.cmd_test(args.test_cmd)
+    #     if io.placeholder:
+    #         coder.run(io.placeholder)
 
-    if args.commit:
-        if args.dry_run:
-            io.tool_output("Dry run enabled, skipping commit.")
-        else:
-            coder.commands.cmd_commit()
+    # if args.commit:
+    #     if args.dry_run:
+    #         io.tool_output("Dry run enabled, skipping commit.")
+    #     else:
+    #         coder.commands.cmd_commit()
 
-    if args.lint or args.test or args.commit:
-        analytics.event("exit", reason="Completed lint/test/commit")
-        return
+    # if args.lint or args.test or args.commit:
+    #     analytics.event("exit", reason="Completed lint/test/commit")
+    #     return
 
     if args.show_repo_map:
         repo_map = coder.get_repo_map()
         if repo_map:
             io.tool_output(repo_map)
-        analytics.event("exit", reason="Showed repo map")
+        # analytics.event("exit", reason="Showed repo map")
         return
 
     if args.apply:
