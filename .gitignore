@@ -15,10 +15,6 @@ venv/
 ENV/
 env/
 
-# Asterism specific
-.asterism.tags.cache.v4/
-*.egg-info/
-
 # IDE
 .vscode/
 .idea/
@@ -29,7 +25,3 @@ env/
 # OS
 .DS_Store
 Thumbs.db
-
-# Test outputs
-repo-map-*.md
-test_*.md
