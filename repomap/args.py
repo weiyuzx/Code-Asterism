@@ -45,7 +45,6 @@ def get_parser(default_config_files, git_root):
         add_config_file_help=True,
         default_config_files=asterisk_config_files,
         config_file_parser_class=configargparse.YAMLConfigFileParser,
-        auto_env_var_prefix="ASTERISM_",
         formatter_class=argparse.RawDescriptionHelpFormatter,
         ignore_unknown_config_file_keys=True,  # Ignore unknown keys like --model
     )

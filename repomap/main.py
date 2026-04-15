@@ -15,7 +15,6 @@ except ImportError:
 
 import importlib_resources
 import shtab
-from dotenv import load_dotenv
 from prompt_toolkit.enums import EditingMode
 
 from repomap import __version__, models, urls, utils
@@ -358,35 +357,6 @@ def register_models(git_root, model_settings_fname, io, verbose=False):
     return None
 
 
-def load_dotenv_files(git_root, dotenv_fname, encoding="utf-8"):
-    # Standard .env file search path
-    dotenv_files = generate_search_path_list(
-        ".env",
-        git_root,
-        dotenv_fname,
-    )
-
-    # Explicitly add the OAuth keys file to the beginning of the list
-    oauth_keys_file = Path.home() / ".aider" / "oauth-keys.env"
-    if oauth_keys_file.exists():
-        # Insert at the beginning so it's loaded first (and potentially overridden)
-        dotenv_files.insert(0, str(oauth_keys_file.resolve()))
-        # Remove duplicates if it somehow got included by generate_search_path_list
-        dotenv_files = list(dict.fromkeys(dotenv_files))
-
-    loaded = []
-    for fname in dotenv_files:
-        try:
-            if Path(fname).exists():
-                load_dotenv(fname, override=True, encoding=encoding)
-                loaded.append(fname)
-        except OSError as e:
-            print(f"OSError loading {fname}: {e}")
-        except Exception as e:
-            print(f"Error loading {fname}: {e}")
-    return loaded
-
-
 def register_litellm_models(git_root, model_metadata_fname, io, verbose=False):
     model_metadata_files = []
 
@@ -497,12 +467,7 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
 
     args, unknown = parser.parse_known_args(argv)
 
-    # Load the .env file specified in the arguments
-    # Simplified for repomap - no .env file loading needed
-    loaded_dotenvs = []
-    # loaded_dotenvs = load_dotenv_files(git_root, args.env_file, args.encoding)
-
-    # Parse again to include any arguments that might have been defined in .env
+    # Parse final arguments
     args = parser.parse_args(argv)
 
     # Shell completions - removed
@@ -650,10 +615,6 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
     #     launch_gui(argv)
     #     analytics.event("exit", reason="GUI session ended")
     #     return
-
-    if args.verbose:
-        for fname in loaded_dotenvs:
-            io.tool_output(f"Loaded {fname}")
 
     # File handling for repomap
     all_files = args.files or []
