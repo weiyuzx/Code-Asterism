@@ -797,7 +797,7 @@ two
             diff = saved_diffs[0]
             self.assertIn("file.txt", diff)
 
-    def test_skip_aiderignored_files(self):
+    def test_skip_asterismignored_files(self):
         with GitTemporaryDirectory():
             repo = git.Repo()
 
@@ -813,13 +813,13 @@ two
 
             fnames = [fname1, fname2, fname3]
 
-            aignore = Path(".aiderignore")
+            aignore = Path(".asterismignore")
             aignore.write_text(f"{fname1}\n{fname2}\ndir\n")
             repo = GitRepo(
                 io,
                 fnames,
                 None,
-                aider_ignore_file=str(aignore),
+                asterism_ignore_file=str(aignore),
             )
 
             coder = Coder.create(

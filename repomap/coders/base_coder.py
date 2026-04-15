@@ -261,7 +261,7 @@ class Coder:
             lines.append(f"Git repo: {rel_repo_dir} with {num_files:,} files")
             if num_files > 1000:
                 lines.append(
-                    "Warning: For large repos, consider using --subtree-only and .aiderignore"
+                    "Warning: For large repos, consider using --subtree-only and .asterismignore"
                 )
                 lines.append(f"See: {urls.large_repos}")
         else:
@@ -458,7 +458,7 @@ class Coder:
                 continue
 
             if self.repo and self.repo.ignored_file(fname):
-                self.io.tool_warning(f"Skipping {fname} that matches aiderignore spec.")
+                self.io.tool_warning(f"Skipping {fname} that matches asterismignore spec.")
                 continue
 
             if not fname.exists():

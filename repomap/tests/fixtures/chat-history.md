@@ -4170,7 +4170,7 @@ self = <aider.coders.editblock_coder.EditBlockCoder object at 0x128a7c080>
             lines.append(f"Git repo: {rel_repo_dir} with {num_files:,} files")
             if num_files > 1000:
                 lines.append(
-                    "Warning: For large repos, consider using an .aiderignore file to ignore"
+                    "Warning: For large repos, consider using an .asterismignore file to ignore"
                     " irrelevant files/dirs."
                 )
         else:
@@ -4333,7 +4333,7 @@ FAILED tests/basic/test_main.py::TestMain::test_map_tokens_option_with_non_zero_
 > lines.append(f"Git repo: {rel_repo_dir} with {num_files:,} files")  
 > if num_files > 1000:  
 > lines.append(  
-> "Warning: For large repos, consider using an .aiderignore file to ignore"  
+> "Warning: For large repos, consider using an .asterismignore file to ignore"  
 > " irrelevant files/dirs."  
 > )  
 > else:  
@@ -4476,7 +4476,7 @@ self = <aider.coders.editblock_coder.EditBlockCoder object at 0x129684830>
             lines.append(f"Git repo: {rel_repo_dir} with {num_files:,} files")
             if num_files > 1000:
                 lines.append(
-                    "Warning: For large repos, consider using an .aiderignore file to ignore"
+                    "Warning: For large repos, consider using an .asterismignore file to ignore"
                     " irrelevant files/dirs."
                 )
         else:
@@ -4548,7 +4548,7 @@ FAILED tests/basic/test_main.py::TestMain::test_map_tokens_option - TypeError...
 > lines.append(f"Git repo: {rel_repo_dir} with {num_files:,} files")  
 > if num_files > 1000:  
 > lines.append(  
-> "Warning: For large repos, consider using an .aiderignore file to ignore"  
+> "Warning: For large repos, consider using an .asterismignore file to ignore"  
 > " irrelevant files/dirs."  
 > )  
 > else:  
@@ -9989,7 +9989,7 @@ aider/main.py
                 io,
                 fnames,
                 git_dname or ".",
-                args.aiderignore,
+                args.asterismignore,
                 models=main_model.commit_message_models(),
                 attribute_author=args.attribute_author,
                 attribute_committer=args.attribute_committer,
@@ -10007,7 +10007,7 @@ aider/main.py
                 io,
                 fnames,
                 git_dname or ".",
-                args.aiderignore,
+                args.asterismignore,
                 models=main_model.commit_message_models(),
                 attribute_author=args.attribute_author,
                 attribute_committer=args.attribute_committer,
@@ -10067,7 +10067,7 @@ This change replaces the `FileNotFoundError` exception with `SuitableRepoNotFoun
 > 476│                io,  
 > 477│                fnames,  
 > 478│                git_dname or ".",  
-> 479│                args.aiderignore,  
+> 479│                args.asterismignore,  
 > 480│                models=main_model.commit_message_models(),  
 > 481│                attribute_author=args.attribute_author,  
 > 482│                attribute_committer=args.attribute_committer,  
@@ -20664,13 +20664,13 @@ Defaults:
   --tool-error-color:#FF2222
   --assistant-output-color:#0088ff
   --code-theme:      default
-  --aiderignore:     /Users/gauthier/Projects/aider/.aiderignore
+  --asterismignore:     /Users/gauthier/Projects/aider/.asterismignore
   --test-cmd:        []
   --voice-language:  en
   --encoding:        utf-8
 
 Option settings:
-  - aiderignore: /Users/gauthier/Projects/aider/.aiderignore
+  - asterismignore: /Users/gauthier/Projects/aider/.asterismignore
   - anthropic_api_key: ...CQAA
   - apply: None
   - assistant_output_color: #0088ff
@@ -20781,13 +20781,13 @@ Defaults:
   --tool-error-color:#FF2222
   --assistant-output-color:#0088ff
   --code-theme:      default
-  --aiderignore:     /Users/gauthier/Projects/aider/.aiderignore
+  --asterismignore:     /Users/gauthier/Projects/aider/.asterismignore
   --test-cmd:        []
   --voice-language:  en
   --encoding:        utf-8
 
 Option settings:
-  - aiderignore: /Users/gauthier/Projects/aider/.aiderignore
+  - asterismignore: /Users/gauthier/Projects/aider/.asterismignore
   - anthropic_api_key: ...CQAA
   - apply: None
   - assistant_output_color: #0088ff
@@ -22826,7 +22826,7 @@ Certainly! I'll add tests for the `/read` command to ensure it adds an `abs_read
 tests/basic/test_commands.py
 <source>python
 <<<<<<< SEARCH
-    def test_cmd_add_aiderignored_file(self):
+    def test_cmd_add_asterismignored_file(self):
         with GitTemporaryDirectory():
             repo = git.Repo()
 
@@ -22838,7 +22838,7 @@ tests/basic/test_commands.py
             repo.git.add(str(fname2))
             repo.git.commit("-m", "initial")
 
-            aignore = Path(".aiderignore")
+            aignore = Path(".asterismignore")
             aignore.write_text(f"{fname1}\n{fname2}\ndir\n")
 
             io = InputOutput(yes=True)
@@ -22868,7 +22868,7 @@ tests/basic/test_commands.py
 
     def test_cmd_ask(self):
 =======
-    def test_cmd_add_aiderignored_file(self):
+    def test_cmd_add_asterismignored_file(self):
         with GitTemporaryDirectory():
             repo = git.Repo()
 
@@ -22880,7 +22880,7 @@ tests/basic/test_commands.py
             repo.git.add(str(fname2))
             repo.git.commit("-m", "initial")
 
-            aignore = Path(".aiderignore")
+            aignore = Path(".asterismignore")
             aignore.write_text(f"{fname1}\n{fname2}\ndir\n")
 
             io = InputOutput(yes=True)
@@ -32989,7 +32989,7 @@ aider/main.py
                 io,
                 fnames,
                 git_dname,
-                args.aiderignore,
+                args.asterismignore,
                 models=main_model.commit_message_models(),
                 attribute_author=args.attribute_author,
                 attribute_committer=args.attribute_committer,
@@ -33002,7 +33002,7 @@ aider/main.py
                 io,
                 fnames,
                 git_dname,
-                args.aiderignore,
+                args.asterismignore,
                 models=main_model.commit_message_models(),
                 attribute_author=args.attribute_author,
                 attribute_committer=args.attribute_committer,
@@ -43090,13 +43090,13 @@ Defaults:
   --tool-error-color:#FF2222
   --assistant-output-color:#0088ff
   --code-theme:      default
-  --aiderignore:     /Users/gauthier/Projects/aider/.aiderignore
+  --asterismignore:     /Users/gauthier/Projects/aider/.asterismignore
   --test-cmd:        []
   --voice-language:  en
   --encoding:        utf-8
 
 Option settings:
-  - aiderignore: /Users/gauthier/Projects/aider/.aiderignore
+  - asterismignore: /Users/gauthier/Projects/aider/.asterismignore
   - anthropic_api_key: ...CQAA
   - apply: None
   - assistant_output_color: #0088ff
@@ -43229,7 +43229,7 @@ aider/commands.py
                 fname = Path(self.coder.root) / word
 
             if self.coder.repo and self.coder.repo.ignored_file(fname):
-                self.io.tool_error(f"Skipping {fname} that matches aiderignore spec.")
+                self.io.tool_error(f"Skipping {fname} that matches asterismignore spec.")
                 continue
 
             if fname.exists():
@@ -43297,7 +43297,7 @@ aider/commands.py
                 fname = Path(self.coder.root) / word
 
             if self.coder.repo and self.coder.repo.ignored_file(fname):
-                self.io.tool_error(f"Skipping {fname} that matches aiderignore spec.")
+                self.io.tool_error(f"Skipping {fname} that matches asterismignore spec.")
                 continue
 
             if fname.exists():
@@ -43650,7 +43650,7 @@ args = 'test_read_only.txt'
                 fname = Path(self.coder.root) / word
     
             if self.coder.repo and self.coder.repo.ignored_file(fname):
-                self.io.tool_error(f"Skipping {fname} that matches aiderignore spec.")
+                self.io.tool_error(f"Skipping {fname} that matches asterismignore spec.")
                 continue
     
             if fname.exists():
@@ -43760,7 +43760,7 @@ FAILED tests/basic/test_commands.py::TestCommands::test_cmd_add_read_only_file
 > fname = Path(self.coder.root) / word  
 >  
 > if self.coder.repo and self.coder.repo.ignored_file(fname):  
-> self.io.tool_error(f"Skipping {fname} that matches aiderignore spec.")  
+> self.io.tool_error(f"Skipping {fname} that matches asterismignore spec.")  
 > continue  
 >  
 > if fname.exists():  
@@ -46647,7 +46647,7 @@ HISTORY.md
 
 - Issue a warning if user adds too much code to the chat.
   - https://aider.chat/docs/faq.html#how-can-i-add-all-the-files-to-the-chat
-- Vocally refuse to add files to the chat that match `.aiderignore`
+- Vocally refuse to add files to the chat that match `.asterismignore`
   - Prevents bug where subsequent git commit of those files will fail.
 - Added `--openai-organization-id` argument.
 - Show the user a FAQ link if edits fail to apply.
@@ -47134,13 +47134,13 @@ Defaults:
   --tool-error-color:#FF2222
   --assistant-output-color:#0088ff
   --code-theme:      default
-  --aiderignore:     /Users/gauthier/Projects/aider/.aiderignore
+  --asterismignore:     /Users/gauthier/Projects/aider/.asterismignore
   --test-cmd:        []
   --voice-language:  en
   --encoding:        utf-8
 
 Option settings:
-  - aiderignore: /Users/gauthier/Projects/aider/.aiderignore
+  - asterismignore: /Users/gauthier/Projects/aider/.asterismignore
   - anthropic_api_key: ...CQAA
   - apply: None
   - assistant_output_color: #0088ff
@@ -50283,13 +50283,13 @@ Defaults:
   --tool-error-color:#FF2222
   --assistant-output-color:#0088ff
   --code-theme:      default
-  --aiderignore:     /Users/gauthier/Projects/aider/.aiderignore
+  --asterismignore:     /Users/gauthier/Projects/aider/.asterismignore
   --test-cmd:        []
   --voice-language:  en
   --encoding:        utf-8
 
 Option settings:
-  - aiderignore: /Users/gauthier/Projects/aider/.aiderignore
+  - asterismignore: /Users/gauthier/Projects/aider/.asterismignore
   - analytics: True
   - analytics_log: None
   - anthropic_api_key: ...CQAA
@@ -51894,7 +51894,7 @@ HISTORY.md
 
 - Émettre un avertissement si l'utilisateur ajoute trop de code à la discussion.
   - https://aider.chat/docs/faq.html#how-can-i-add-all-the-files-to-the-chat
-- Refuser vocalement d'ajouter des fichiers à la discussion qui correspondent à `.aiderignore`
+- Refuser vocalement d'ajouter des fichiers à la discussion qui correspondent à `.asterismignore`
   - Empêche un bug où la validation git ultérieure de ces fichiers échouera.
 - Ajouté l'argument `--openai-organization-id`.
 - Montrer à l'utilisateur un lien FAQ si les éditions échouent à s'appliquer.
@@ -52088,7 +52088,7 @@ Les messages de commit ne sont plus préfixés avec "aider:". Au lieu de cela, l
 
 - Émettre un avertissement si l'utilisateur ajoute trop de code au chat.
   - https://aider.chat/docs/faq.html#how-can-i-add-all-the-files-to-the-chat
-- Refuser vocalement d'ajouter des fichiers au chat qui correspondent à `.aiderignore`
+- Refuser vocalement d'ajouter des fichiers au chat qui correspondent à `.asterismignore`
   - Empêche un bogue où le commit git ultérieur de ces fichiers échouera.
 - Ajout de l'argument `--openai-organization-id` en ligne de commande.
 - Afficher un lien FAQ si les éditions échouent à s'appliquer.
@@ -52111,7 +52111,7 @@ Les messages de commit ne sont plus préfixés avec "aider:". Au lieu de cela, l
 
 - Émettre un avertissement si l'utilisateur ajoute trop de code au chat.
   - https://aider.chat/docs/faq.html#how-can-i-add-all-the-files-to-the-chat
-- Refuser vocalement d'ajouter des fichiers au chat qui correspondent à `.aiderignore`
+- Refuser vocalement d'ajouter des fichiers au chat qui correspondent à `.asterismignore`
   - Empêche un bogue où le commit git ultérieur de ces fichiers échouera.
 - Ajout de l'argument `--openai-organization-id` en ligne de commande.
 - Afficher un lien FAQ si les éditions échouent à s'appliquer.
@@ -52160,7 +52160,7 @@ de GPT-4 Turbo (`gpt-4-1106-preview`).
 
 ### Aider v0.15.0
 
-- Ajout du support du fichier `.aiderignore`, qui indique à aider d'ignorer certaines parties du dépôt git.
+- Ajout du support du fichier `.asterismignore`, qui indique à aider d'ignorer certaines parties du dépôt git.
 - Nouveau argument de ligne de commande `--commit`, qui valide simplement tous les changements en attente avec un message de validation sensé généré par gpt-3.5.
 - Ajout de ctags universels et de plusieurs architectures à l'[image docker d'aider](https://aider.chat/docs/install/docker.html)
 - `/run` et `/git` acceptent maintenant les commandes shell complètes, comme : `/run (cd subdir; ls)`
@@ -52467,7 +52467,7 @@ Les messages de commit ne sont plus préfixés avec "aider:". Au lieu de cela, l
 
 - Émettre un avertissement si l'utilisateur ajoute trop de code au chat.
   - https://aider.chat/docs/faq.html#how-can-i-add-all-the-files-to-the-chat
-- Refuser vocalement d'ajouter des fichiers au chat qui correspondent à `.aiderignore`
+- Refuser vocalement d'ajouter des fichiers au chat qui correspondent à `.asterismignore`
   - Empêche un bogue où le commit git ultérieur de ces fichiers échouera.
 - Ajout de l'argument de ligne de commande `--openai-organization-id`.
 - Afficher un lien
@@ -52762,7 +52762,7 @@ Les messages de commit ne sont plus préfixés avec "aider:". Au lieu de cela, l
 
 - Avertissement si l'utilisateur ajoute trop de code au chat.
   - https://aider.chat/docs/faq.html#how-can-i-add-all-the-files-to-the-chat
-- Refus vocal d'ajouter des fichiers au chat qui correspondent à `.aiderignore`.
+- Refus vocal d'ajouter des fichiers au chat qui correspondent à `.asterismignore`.
   - Empêche un bogue où le commit git ultérieur de ces fichiers échouera.
 - Ajout de l'argument `--openai-organization-id` en ligne de commande.
 - Afficher un lien FAQ si les éditions échouent à s'appliquer.
@@ -53123,13 +53123,13 @@ Defaults:
   --tool-error-color:#FF2222
   --assistant-output-color:#0088ff
   --code-theme:      default
-  --aiderignore:     /Users/gauthier/Projects/aider/.aiderignore
+  --asterismignore:     /Users/gauthier/Projects/aider/.asterismignore
   --test-cmd:        []
   --voice-language:  en
   --encoding:        utf-8
 
 Option settings:
-  - aiderignore: /Users/gauthier/Projects/aider/.aiderignore
+  - asterismignore: /Users/gauthier/Projects/aider/.asterismignore
   - anthropic_api_key: ...CQAA
   - apply: None
   - assistant_output_color: #0088ff
@@ -53231,13 +53231,13 @@ Defaults:
   --tool-error-color:#FF2222
   --assistant-output-color:#0088ff
   --code-theme:      default
-  --aiderignore:     /Users/gauthier/Projects/aider/.aiderignore
+  --asterismignore:     /Users/gauthier/Projects/aider/.asterismignore
   --test-cmd:        []
   --voice-language:  en
   --encoding:        utf-8
 
 Option settings:
-  - aiderignore: /Users/gauthier/Projects/aider/.aiderignore
+  - asterismignore: /Users/gauthier/Projects/aider/.asterismignore
   - anthropic_api_key: ...CQAA
   - apply: None
   - assistant_output_color: #0088ff
@@ -53339,13 +53339,13 @@ Defaults:
   --tool-error-color:#FF2222
   --assistant-output-color:#0088ff
   --code-theme:      default
-  --aiderignore:     /Users/gauthier/Projects/aider/.aiderignore
+  --asterismignore:     /Users/gauthier/Projects/aider/.asterismignore
   --test-cmd:        []
   --voice-language:  en
   --encoding:        utf-8
 
 Option settings:
-  - aiderignore: /Users/gauthier/Projects/aider/.aiderignore
+  - asterismignore: /Users/gauthier/Projects/aider/.asterismignore
   - anthropic_api_key: ...CQAA
   - apply: None
   - assistant_output_color: #0088ff
@@ -53498,13 +53498,13 @@ Defaults:
   --tool-error-color:#FF2222
   --assistant-output-color:#0088ff
   --code-theme:      default
-  --aiderignore:     /Users/gauthier/Projects/aider/.aiderignore
+  --asterismignore:     /Users/gauthier/Projects/aider/.asterismignore
   --test-cmd:        []
   --voice-language:  en
   --encoding:        utf-8
 
 Option settings:
-  - aiderignore: /Users/gauthier/Projects/aider/.aiderignore
+  - asterismignore: /Users/gauthier/Projects/aider/.asterismignore
   - anthropic_api_key: ...CQAA
   - apply: None
   - assistant_output_color: #0088ff
@@ -54335,7 +54335,7 @@ aider/coders/base_coder.py
             fname = str(fname.resolve())
 
             if self.repo and self.repo.ignored_file(fname):
-                self.io.tool_error(f"Skipping {fname} that matches aiderignore spec.")
+                self.io.tool_error(f"Skipping {fname} that matches asterismignore spec.")
                 continue
 
             self.abs_fnames.add(fname)
@@ -54533,7 +54533,7 @@ aider/coders/base_coder.py
             fname = str(fname.resolve())
 
             if self.repo and self.repo.ignored_file(fname):
-                self.io.tool_error(f"Skipping {fname} that matches aiderignore spec.")
+                self.io.tool_error(f"Skipping {fname} that matches asterismignore spec.")
                 continue
 
             self.file_manager.add_file(fname)
@@ -55770,7 +55770,7 @@ HISTORY.md
 
 - Émettre un avertissement si l'utilisateur ajoute trop de code à la discussion.
   - https://aider.chat/docs/faq.html#how-can-i-add-all-the-files-to-the-chat
-- Refuser vocalement d'ajouter des fichiers à la discussion qui correspondent à `.aiderignore`
+- Refuser vocalement d'ajouter des fichiers à la discussion qui correspondent à `.asterismignore`
   - Empêche un bug où la validation git ultérieure de ces fichiers échouera.
 - Ajouté l'argument `--openai-organization-id`.
 - Montrer à l'utilisateur un lien FAQ si les modifications échouent à s'appliquer.
@@ -55886,7 +55886,7 @@ HISTORY.md
 
 ### Aider v0.15.0
 
-- Ajout du support du fichier `.aiderignore`, qui indique à aider d'ignorer certaines parties du dépôt git.
+- Ajout du support du fichier `.asterismignore`, qui indique à aider d'ignorer certaines parties du dépôt git.
 - Nouveau argument de ligne de commande `--commit`, qui valide simplement tous les changements en attente avec un message de validation sensé généré par gpt-3.5.
 - Ajout de ctags universels et de plusieurs architectures à l'[image docker d'aider](https://aider.chat/docs/install/docker.html)
 - `/run` et `/git` acceptent maintenant les commandes shell complètes, comme : `/run (cd subdir; ls)`
@@ -56398,7 +56398,7 @@ HISTORY.md
 
 - Émettre un avertissement si l'utilisateur ajoute trop de code à la discussion.
   - https://aider.chat/docs/faq.html#how-can-i-add-all-the-files-to-the-chat
-- Refuser vocalement d'ajouter des fichiers à la discussion qui correspondent à `.aiderignore`
+- Refuser vocalement d'ajouter des fichiers à la discussion qui correspondent à `.asterismignore`
   - Empêche un bug où la validation git ultérieure de ces fichiers échouera.
 - Ajouté l'argument `--openai-organization-id`.
 - Montrer à l'utilisateur un lien FAQ si les modifications échouent à s'appliquer.
@@ -56511,7 +56511,7 @@ HISTORY.md
 
 ### Aider v0.15.0
 
-- Ajout du support du fichier `.aiderignore`, qui indique à aider d'ignorer certaines parties du dépôt git.
+- Ajout du support du fichier `.asterismignore`, qui indique à aider d'ignorer certaines parties du dépôt git.
 - Nouveau argument de ligne de commande `--commit`, qui valide simplement tous les changements en attente avec un message de validation sensé généré par gpt-3.5.
 - Ajout de ctags universels et de plusieurs architectures à l'[image docker d'aider](https://aider.chat/docs/install/docker.html)
 - `/run` et `/git` acceptent maintenant les commandes shell complètes, comme : `/run (cd subdir; ls)`
@@ -57697,7 +57697,7 @@ HISTORY.md
 
 - Émettre un avertissement si l'utilisateur ajoute trop de code à la discussion.
   - https://aider.chat/docs/faq.html#how-can-i-add-all-the-files-to-the-chat
-- Refuser vocalement d'ajouter des fichiers à la discussion qui correspondent à `.aiderignore`
+- Refuser vocalement d'ajouter des fichiers à la discussion qui correspondent à `.asterismignore`
   - Empêche un bug où la validation git ultérieure de ces fichiers échouera.
 - Ajouté l'argument `--openai-organization-id`.
 - Montrer à l'utilisateur un lien FAQ si les modifications échouent à s'appliquer.
@@ -57902,7 +57902,7 @@ These changes provide more detailed information about privacy law compliance, wh
 
 ### Aider v0.15.0
 
-- Ajout du support du fichier `.aiderignore`, qui indique à aider d'ignorer certaines parties du dépôt git.
+- Ajout du support du fichier `.asterismignore`, qui indique à aider d'ignorer certaines parties du dépôt git.
 - Nouveau argument de ligne de commande `--commit`, qui valide simplement tous les changements en attente avec un message de validation sensé généré par gpt-3.5.
 - Ajout de ctags universels et de plusieurs architectures à l'[image docker d'aider](https://aider.chat/docs/install/docker.html)
 - `/run` et `/git` acceptent maintenant les commandes shell complètes, comme : `/run (cd subdir; ls)`
@@ -58631,7 +58631,7 @@ HISTORY.md
 
 - Émettre un avertissement si l'utilisateur ajoute trop de code à la discussion.
   - https://aider.chat/docs/faq.html#how-can-i-add-all-the-files-to-the-chat
-- Refuser vocalement d'ajouter des fichiers à la discussion qui correspondent à `.aiderignore`
+- Refuser vocalement d'ajouter des fichiers à la discussion qui correspondent à `.asterismignore`
   - Empêche un bug où la validation git ultérieure de ces fichiers échouera.
 - Ajouté l'argument `--openai-organization-id`.
 - Montrer à l'utilisateur un lien FAQ si les modifications échouent à s'appliquer.
@@ -58744,7 +58744,7 @@ Beaucoup moins d'erreurs d'édition de GPT-4 Turbo (`gpt-4-1106-preview`).
 
 ### Aider v0.15.0
 
-- Ajout du support du fichier `.aiderignore`, qui indique à aider d'ignorer certaines parties du dépôt git.
+- Ajout du support du fichier `.asterismignore`, qui indique à aider d'ignorer certaines parties du dépôt git.
 - Nouveau argument de ligne de commande `--commit`, qui valide simplement tous les changements en attente avec un message de validation sensé généré par gpt-3.5.
 - Ajout de ctags universels et de plusieurs architectures à l'[image docker d'aider](https://aider.chat/docs/install/docker.html)
 - `/run` et `/git` acceptent maintenant les commandes shell complètes, comme : `/run (cd subdir; ls)`
@@ -67470,13 +67470,13 @@ Defaults:
   --tool-error-color:#FF2222
   --assistant-output-color:#0088ff
   --code-theme:      default
-  --aiderignore:     /Users/gauthier/Projects/aider/.aiderignore
+  --asterismignore:     /Users/gauthier/Projects/aider/.asterismignore
   --test-cmd:        []
   --voice-language:  en
   --encoding:        utf-8
 
 Option settings:
-  - aiderignore: /Users/gauthier/Projects/aider/.aiderignore
+  - asterismignore: /Users/gauthier/Projects/aider/.asterismignore
   - anthropic_api_key: ...CQAA
   - apply: None
   - assistant_output_color: #0088ff
@@ -68049,14 +68049,14 @@ def get_parser(default_config_files, git_root):
         default=True,
         help="Activer/désactiver l'ajout de .aider* à .gitignore (par défaut : Vrai)",
     )
-    default_aiderignore_file = (
-        os.path.join(git_root, ".aiderignore") if git_root else ".aiderignore"
+    default_asterismignore_file = (
+        os.path.join(git_root, ".asterismignore") if git_root else ".asterismignore"
     )
     group.add_argument(
-        "--aiderignore",
+        "--asterismignore",
         metavar="AIDERIGNORE",
-        default=default_aiderignore_file,
-        help="Spécifier le fichier d'ignorance aider (par défaut : .aiderignore dans la racine du dépôt git)",
+        default=default_asterismignore_file,
+        help="Spécifier le fichier d'ignorance aider (par défaut : .asterismignore dans la racine du dépôt git)",
     )
     group.add_argument(
         "--subtree-only",
@@ -72086,13 +72086,13 @@ Defaults:
   --tool-error-color:#FF2222
   --assistant-output-color:#0088ff
   --code-theme:      default
-  --aiderignore:     /Users/gauthier/Projects/aider/.aiderignore
+  --asterismignore:     /Users/gauthier/Projects/aider/.asterismignore
   --test-cmd:        []
   --voice-language:  en
   --encoding:        utf-8
 
 Option settings:
-  - aiderignore: /Users/gauthier/Projects/aider/.aiderignore
+  - asterismignore: /Users/gauthier/Projects/aider/.asterismignore
   - anthropic_api_key: ...CQAA
   - apply: None
   - assistant_output_color: #0088ff
@@ -72203,13 +72203,13 @@ Defaults:
   --tool-error-color:#FF2222
   --assistant-output-color:#0088ff
   --code-theme:      default
-  --aiderignore:     /Users/gauthier/Projects/aider/.aiderignore
+  --asterismignore:     /Users/gauthier/Projects/aider/.asterismignore
   --test-cmd:        []
   --voice-language:  en
   --encoding:        utf-8
 
 Option settings:
-  - aiderignore: /Users/gauthier/Projects/aider/.aiderignore
+  - asterismignore: /Users/gauthier/Projects/aider/.asterismignore
   - anthropic_api_key: ...CQAA
   - apply: None
   - assistant_output_color: #0088ff
@@ -72314,13 +72314,13 @@ Defaults:
   --tool-error-color:#FF2222
   --assistant-output-color:#0088ff
   --code-theme:      default
-  --aiderignore:     /Users/gauthier/Projects/aider/.aiderignore
+  --asterismignore:     /Users/gauthier/Projects/aider/.asterismignore
   --test-cmd:        []
   --voice-language:  en
   --encoding:        utf-8
 
 Option settings:
-  - aiderignore: /Users/gauthier/Projects/aider/.aiderignore
+  - asterismignore: /Users/gauthier/Projects/aider/.asterismignore
   - anthropic_api_key: ...CQAA
   - apply: None
   - assistant_output_color: #0088ff
@@ -72435,13 +72435,13 @@ Defaults:
   --tool-error-color:#FF2222
   --assistant-output-color:#0088ff
   --code-theme:      default
-  --aiderignore:     /Users/gauthier/Projects/aider/.aiderignore
+  --asterismignore:     /Users/gauthier/Projects/aider/.asterismignore
   --test-cmd:        []
   --voice-language:  en
   --encoding:        utf-8
 
 Option settings:
-  - aiderignore: /Users/gauthier/Projects/aider/.aiderignore
+  - asterismignore: /Users/gauthier/Projects/aider/.asterismignore
   - anthropic_api_key: ...CQAA
   - apply: None
   - assistant_output_color: #0088ff
@@ -72556,13 +72556,13 @@ Defaults:
   --tool-error-color:#FF2222
   --assistant-output-color:#0088ff
   --code-theme:      default
-  --aiderignore:     /Users/gauthier/Projects/aider/.aiderignore
+  --asterismignore:     /Users/gauthier/Projects/aider/.asterismignore
   --test-cmd:        []
   --voice-language:  en
   --encoding:        utf-8
 
 Option settings:
-  - aiderignore: /Users/gauthier/Projects/aider/.aiderignore
+  - asterismignore: /Users/gauthier/Projects/aider/.asterismignore
   - anthropic_api_key: ...CQAA
   - apply: None
   - assistant_output_color: #0088ff
@@ -72677,13 +72677,13 @@ Defaults:
   --tool-error-color:#FF2222
   --assistant-output-color:#0088ff
   --code-theme:      default
-  --aiderignore:     /Users/gauthier/Projects/aider/.aiderignore
+  --asterismignore:     /Users/gauthier/Projects/aider/.asterismignore
   --test-cmd:        []
   --voice-language:  en
   --encoding:        utf-8
 
 Option settings:
-  - aiderignore: /Users/gauthier/Projects/aider/.aiderignore
+  - asterismignore: /Users/gauthier/Projects/aider/.asterismignore
   - anthropic_api_key: ...CQAA
   - apply: None
   - assistant_output_color: #0088ff
@@ -72798,13 +72798,13 @@ Defaults:
   --tool-error-color:#FF2222
   --assistant-output-color:#0088ff
   --code-theme:      default
-  --aiderignore:     /Users/gauthier/Projects/aider/.aiderignore
+  --asterismignore:     /Users/gauthier/Projects/aider/.asterismignore
   --test-cmd:        []
   --voice-language:  en
   --encoding:        utf-8
 
 Option settings:
-  - aiderignore: /Users/gauthier/Projects/aider/.aiderignore
+  - asterismignore: /Users/gauthier/Projects/aider/.asterismignore
   - anthropic_api_key: ...CQAA
   - apply: None
   - assistant_output_color: #0088ff
@@ -72918,13 +72918,13 @@ Defaults:
   --tool-error-color:#FF2222
   --assistant-output-color:#0088ff
   --code-theme:      default
-  --aiderignore:     /Users/gauthier/Projects/aider/.aiderignore
+  --asterismignore:     /Users/gauthier/Projects/aider/.asterismignore
   --test-cmd:        []
   --voice-language:  en
   --encoding:        utf-8
 
 Option settings:
-  - aiderignore: /Users/gauthier/Projects/aider/.aiderignore
+  - asterismignore: /Users/gauthier/Projects/aider/.asterismignore
   - anthropic_api_key: ...CQAA
   - apply: None
   - assistant_output_color: #0088ff
@@ -73038,13 +73038,13 @@ Defaults:
   --tool-error-color:#FF2222
   --assistant-output-color:#0088ff
   --code-theme:      default
-  --aiderignore:     /Users/gauthier/Projects/aider/.aiderignore
+  --asterismignore:     /Users/gauthier/Projects/aider/.asterismignore
   --test-cmd:        []
   --voice-language:  en
   --encoding:        utf-8
 
 Option settings:
-  - aiderignore: /Users/gauthier/Projects/aider/.aiderignore
+  - asterismignore: /Users/gauthier/Projects/aider/.asterismignore
   - anthropic_api_key: ...CQAA
   - apply: None
   - assistant_output_color: #0088ff
@@ -73158,13 +73158,13 @@ Defaults:
   --tool-error-color:#FF2222
   --assistant-output-color:#0088ff
   --code-theme:      default
-  --aiderignore:     /Users/gauthier/Projects/aider/.aiderignore
+  --asterismignore:     /Users/gauthier/Projects/aider/.asterismignore
   --test-cmd:        []
   --voice-language:  en
   --encoding:        utf-8
 
 Option settings:
-  - aiderignore: /Users/gauthier/Projects/aider/.aiderignore
+  - asterismignore: /Users/gauthier/Projects/aider/.asterismignore
   - anthropic_api_key: ...CQAA
   - apply: None
   - assistant_output_color: #0088ff
@@ -73278,13 +73278,13 @@ Defaults:
   --tool-error-color:#FF2222
   --assistant-output-color:#0088ff
   --code-theme:      default
-  --aiderignore:     /Users/gauthier/Projects/aider/.aiderignore
+  --asterismignore:     /Users/gauthier/Projects/aider/.asterismignore
   --test-cmd:        []
   --voice-language:  en
   --encoding:        utf-8
 
 Option settings:
-  - aiderignore: /Users/gauthier/Projects/aider/.aiderignore
+  - asterismignore: /Users/gauthier/Projects/aider/.asterismignore
   - anthropic_api_key: ...CQAA
   - apply: None
   - assistant_output_color: #0088ff
@@ -73382,13 +73382,13 @@ Defaults:
   --tool-error-color:#FF2222
   --assistant-output-color:#0088ff
   --code-theme:      default
-  --aiderignore:     /Users/gauthier/Projects/aider/.aiderignore
+  --asterismignore:     /Users/gauthier/Projects/aider/.asterismignore
   --test-cmd:        []
   --voice-language:  en
   --encoding:        utf-8
 
 Option settings:
-  - aiderignore: /Users/gauthier/Projects/aider/.aiderignore
+  - asterismignore: /Users/gauthier/Projects/aider/.asterismignore
   - anthropic_api_key: ...CQAA
   - apply: None
   - assistant_output_color: #0088ff
@@ -73503,13 +73503,13 @@ Defaults:
   --tool-error-color:#FF2222
   --assistant-output-color:#0088ff
   --code-theme:      default
-  --aiderignore:     /Users/gauthier/Projects/aider/.aiderignore
+  --asterismignore:     /Users/gauthier/Projects/aider/.asterismignore
   --test-cmd:        []
   --voice-language:  en
   --encoding:        utf-8
 
 Option settings:
-  - aiderignore: /Users/gauthier/Projects/aider/.aiderignore
+  - asterismignore: /Users/gauthier/Projects/aider/.asterismignore
   - anthropic_api_key: ...CQAA
   - apply: None
   - assistant_output_color: #0088ff
@@ -73644,13 +73644,13 @@ Defaults:
   --tool-error-color:#FF2222
   --assistant-output-color:#0088ff
   --code-theme:      default
-  --aiderignore:     /Users/gauthier/Projects/aider/.aiderignore
+  --asterismignore:     /Users/gauthier/Projects/aider/.asterismignore
   --test-cmd:        []
   --voice-language:  en
   --encoding:        utf-8
 
 Option settings:
-  - aiderignore: /Users/gauthier/Projects/aider/.aiderignore
+  - asterismignore: /Users/gauthier/Projects/aider/.asterismignore
   - anthropic_api_key: ...CQAA
   - apply: None
   - assistant_output_color: #0088ff
@@ -80986,13 +80986,13 @@ Defaults:
   --tool-error-color:#FF2222
   --assistant-output-color:#0088ff
   --code-theme:      default
-  --aiderignore:     /Users/gauthier/Projects/aider/.aiderignore
+  --asterismignore:     /Users/gauthier/Projects/aider/.asterismignore
   --test-cmd:        []
   --voice-language:  en
   --encoding:        utf-8
 
 Option settings:
-  - aiderignore: /Users/gauthier/Projects/aider/.aiderignore
+  - asterismignore: /Users/gauthier/Projects/aider/.asterismignore
   - anthropic_api_key: ...CQAA
   - apply: None
   - assistant_output_color: #0088ff
@@ -81102,13 +81102,13 @@ Defaults:
   --tool-error-color:#FF2222
   --assistant-output-color:#0088ff
   --code-theme:      default
-  --aiderignore:     /Users/gauthier/Projects/aider/.aiderignore
+  --asterismignore:     /Users/gauthier/Projects/aider/.asterismignore
   --test-cmd:        []
   --voice-language:  en
   --encoding:        utf-8
 
 Option settings:
-  - aiderignore: /Users/gauthier/Projects/aider/.aiderignore
+  - asterismignore: /Users/gauthier/Projects/aider/.asterismignore
   - anthropic_api_key: ...CQAA
   - apply: None
   - assistant_output_color: #0088ff
@@ -82011,13 +82011,13 @@ Defaults:
   --tool-error-color:#FF2222
   --assistant-output-color:#0088ff
   --code-theme:      default
-  --aiderignore:     /Users/gauthier/Projects/aider/.aiderignore
+  --asterismignore:     /Users/gauthier/Projects/aider/.asterismignore
   --test-cmd:        []
   --voice-language:  en
   --encoding:        utf-8
 
 Option settings:
-  - aiderignore: /Users/gauthier/Projects/aider/.aiderignore
+  - asterismignore: /Users/gauthier/Projects/aider/.asterismignore
   - anthropic_api_key: ...CQAA
   - apply: None
   - assistant_output_color: #0088ff
@@ -82129,13 +82129,13 @@ Defaults:
   --tool-error-color:#FF2222
   --assistant-output-color:#0088ff
   --code-theme:      default
-  --aiderignore:     /Users/gauthier/Projects/aider/.aiderignore
+  --asterismignore:     /Users/gauthier/Projects/aider/.asterismignore
   --test-cmd:        []
   --voice-language:  en
   --encoding:        utf-8
 
 Option settings:
-  - aiderignore: /Users/gauthier/Projects/aider/.aiderignore
+  - asterismignore: /Users/gauthier/Projects/aider/.asterismignore
   - anthropic_api_key: ...CQAA
   - apply: None
   - assistant_output_color: #0088ff
@@ -83371,7 +83371,7 @@ self = <aider.coders.editblock_coder.EditBlockCoder object at 0x1093161e0>
             lines.append(f"Git repo: {rel_repo_dir} with {num_files:,} files")
             if num_files > 1000:
                 lines.append(
-                    "Warning: For large repos, consider using --subtree-only and .aiderignore"
+                    "Warning: For large repos, consider using --subtree-only and .asterismignore"
                 )
                 lines.append(f"See: {urls.large_repos}")
         else:
@@ -83457,7 +83457,7 @@ FAILED tests/basic/test_main.py::TestMain::test_sonnet_and_cache_options - Ty...
 > lines.append(f"Git repo: {rel_repo_dir} with {num_files:,} files")  
 > if num_files > 1000:  
 > lines.append(  
-> "Warning: For large repos, consider using --subtree-only and .aiderignore"  
+> "Warning: For large repos, consider using --subtree-only and .asterismignore"  
 > )  
 > lines.append(f"See: {urls.large_repos}")  
 > else:  
@@ -85499,13 +85499,13 @@ Defaults:
   --tool-error-color:#FF2222
   --assistant-output-color:#0088ff
   --code-theme:      default
-  --aiderignore:     /Users/gauthier/Projects/aider/.aiderignore
+  --asterismignore:     /Users/gauthier/Projects/aider/.asterismignore
   --test-cmd:        []
   --voice-language:  en
   --encoding:        utf-8
 
 Option settings:
-  - aiderignore: /Users/gauthier/Projects/aider/.aiderignore
+  - asterismignore: /Users/gauthier/Projects/aider/.asterismignore
   - anthropic_api_key: ...CQAA
   - apply: None
   - assistant_output_color: #0088ff
@@ -85656,13 +85656,13 @@ Defaults:
   --tool-error-color:#FF2222
   --assistant-output-color:#0088ff
   --code-theme:      default
-  --aiderignore:     /Users/gauthier/Projects/aider/.aiderignore
+  --asterismignore:     /Users/gauthier/Projects/aider/.asterismignore
   --test-cmd:        []
   --voice-language:  en
   --encoding:        utf-8
 
 Option settings:
-  - aiderignore: /Users/gauthier/Projects/aider/.aiderignore
+  - asterismignore: /Users/gauthier/Projects/aider/.asterismignore
   - anthropic_api_key: ...CQAA
   - apply: None
   - assistant_output_color: #0088ff
@@ -85807,13 +85807,13 @@ Defaults:
   --tool-error-color:#FF2222
   --assistant-output-color:#0088ff
   --code-theme:      default
-  --aiderignore:     /Users/gauthier/Projects/aider/.aiderignore
+  --asterismignore:     /Users/gauthier/Projects/aider/.asterismignore
   --test-cmd:        []
   --voice-language:  en
   --encoding:        utf-8
 
 Option settings:
-  - aiderignore: /Users/gauthier/Projects/aider/.aiderignore
+  - asterismignore: /Users/gauthier/Projects/aider/.asterismignore
   - anthropic_api_key: ...CQAA
   - apply: None
   - assistant_output_color: #0088ff
@@ -85958,13 +85958,13 @@ Defaults:
   --tool-error-color:#FF2222
   --assistant-output-color:#0088ff
   --code-theme:      default
-  --aiderignore:     /Users/gauthier/Projects/aider/.aiderignore
+  --asterismignore:     /Users/gauthier/Projects/aider/.asterismignore
   --test-cmd:        []
   --voice-language:  en
   --encoding:        utf-8
 
 Option settings:
-  - aiderignore: /Users/gauthier/Projects/aider/.aiderignore
+  - asterismignore: /Users/gauthier/Projects/aider/.asterismignore
   - anthropic_api_key: ...CQAA
   - apply: None
   - assistant_output_color: #0088ff
@@ -86750,13 +86750,13 @@ Defaults:
   --tool-error-color:#FF2222
   --assistant-output-color:#0088ff
   --code-theme:      default
-  --aiderignore:     /Users/gauthier/Projects/aider/.aiderignore
+  --asterismignore:     /Users/gauthier/Projects/aider/.asterismignore
   --test-cmd:        []
   --voice-language:  en
   --encoding:        utf-8
 
 Option settings:
-  - aiderignore: /Users/gauthier/Projects/aider/.aiderignore
+  - asterismignore: /Users/gauthier/Projects/aider/.asterismignore
   - anthropic_api_key: ...CQAA
   - apply: None
   - assistant_output_color: #0088ff
@@ -86891,13 +86891,13 @@ Defaults:
   --tool-error-color:#FF2222
   --assistant-output-color:#0088ff
   --code-theme:      default
-  --aiderignore:     /Users/gauthier/Projects/aider/.aiderignore
+  --asterismignore:     /Users/gauthier/Projects/aider/.asterismignore
   --test-cmd:        []
   --voice-language:  en
   --encoding:        utf-8
 
 Option settings:
-  - aiderignore: /Users/gauthier/Projects/aider/.aiderignore
+  - asterismignore: /Users/gauthier/Projects/aider/.asterismignore
   - anthropic_api_key: ...CQAA
   - apply: None
   - assistant_output_color: #0088ff
@@ -87032,13 +87032,13 @@ Defaults:
   --tool-error-color:#FF2222
   --assistant-output-color:#0088ff
   --code-theme:      default
-  --aiderignore:     /Users/gauthier/Projects/aider/.aiderignore
+  --asterismignore:     /Users/gauthier/Projects/aider/.asterismignore
   --test-cmd:        []
   --voice-language:  en
   --encoding:        utf-8
 
 Option settings:
-  - aiderignore: /Users/gauthier/Projects/aider/.aiderignore
+  - asterismignore: /Users/gauthier/Projects/aider/.asterismignore
   - anthropic_api_key: ...CQAA
   - apply: None
   - assistant_output_color: #0088ff
@@ -87172,13 +87172,13 @@ Defaults:
   --tool-error-color:#FF2222
   --assistant-output-color:#0088ff
   --code-theme:      default
-  --aiderignore:     /Users/gauthier/Projects/aider/.aiderignore
+  --asterismignore:     /Users/gauthier/Projects/aider/.asterismignore
   --test-cmd:        []
   --voice-language:  en
   --encoding:        utf-8
 
 Option settings:
-  - aiderignore: /Users/gauthier/Projects/aider/.aiderignore
+  - asterismignore: /Users/gauthier/Projects/aider/.asterismignore
   - anthropic_api_key: ...CQAA
   - apply: None
   - assistant_output_color: #0088ff
@@ -87322,13 +87322,13 @@ Defaults:
   --tool-error-color:#FF2222
   --assistant-output-color:#0088ff
   --code-theme:      default
-  --aiderignore:     /Users/gauthier/Projects/aider/.aiderignore
+  --asterismignore:     /Users/gauthier/Projects/aider/.asterismignore
   --test-cmd:        []
   --voice-language:  en
   --encoding:        utf-8
 
 Option settings:
-  - aiderignore: /Users/gauthier/Projects/aider/.aiderignore
+  - asterismignore: /Users/gauthier/Projects/aider/.asterismignore
   - anthropic_api_key: ...CQAA
   - apply: None
   - assistant_output_color: #0088ff
@@ -87492,13 +87492,13 @@ Defaults:
   --tool-error-color:#FF2222
   --assistant-output-color:#0088ff
   --code-theme:      default
-  --aiderignore:     /Users/gauthier/Projects/aider/.aiderignore
+  --asterismignore:     /Users/gauthier/Projects/aider/.asterismignore
   --test-cmd:        []
   --voice-language:  en
   --encoding:        utf-8
 
 Option settings:
-  - aiderignore: /Users/gauthier/Projects/aider/.aiderignore
+  - asterismignore: /Users/gauthier/Projects/aider/.asterismignore
   - anthropic_api_key: ...CQAA
   - apply: None
   - assistant_output_color: #0088ff
@@ -87662,13 +87662,13 @@ Defaults:
   --tool-error-color:#FF2222
   --assistant-output-color:#0088ff
   --code-theme:      default
-  --aiderignore:     /Users/gauthier/Projects/aider/.aiderignore
+  --asterismignore:     /Users/gauthier/Projects/aider/.asterismignore
   --test-cmd:        []
   --voice-language:  en
   --encoding:        utf-8
 
 Option settings:
-  - aiderignore: /Users/gauthier/Projects/aider/.aiderignore
+  - asterismignore: /Users/gauthier/Projects/aider/.asterismignore
   - anthropic_api_key: ...CQAA
   - apply: None
   - assistant_output_color: #0088ff
@@ -87832,13 +87832,13 @@ Defaults:
   --tool-error-color:#FF2222
   --assistant-output-color:#0088ff
   --code-theme:      default
-  --aiderignore:     /Users/gauthier/Projects/aider/.aiderignore
+  --asterismignore:     /Users/gauthier/Projects/aider/.asterismignore
   --test-cmd:        []
   --voice-language:  en
   --encoding:        utf-8
 
 Option settings:
-  - aiderignore: /Users/gauthier/Projects/aider/.aiderignore
+  - asterismignore: /Users/gauthier/Projects/aider/.asterismignore
   - anthropic_api_key: ...CQAA
   - apply: None
   - assistant_output_color: #0088ff
@@ -87979,13 +87979,13 @@ Defaults:
   --tool-error-color:#FF2222
   --assistant-output-color:#0088ff
   --code-theme:      default
-  --aiderignore:     /Users/gauthier/Projects/aider/.aiderignore
+  --asterismignore:     /Users/gauthier/Projects/aider/.asterismignore
   --test-cmd:        []
   --voice-language:  en
   --encoding:        utf-8
 
 Option settings:
-  - aiderignore: /Users/gauthier/Projects/aider/.aiderignore
+  - asterismignore: /Users/gauthier/Projects/aider/.asterismignore
   - anthropic_api_key: ...CQAA
   - apply: None
   - assistant_output_color: #0088ff
@@ -88126,13 +88126,13 @@ Defaults:
   --tool-error-color:#FF2222
   --assistant-output-color:#0088ff
   --code-theme:      default
-  --aiderignore:     /Users/gauthier/Projects/aider/.aiderignore
+  --asterismignore:     /Users/gauthier/Projects/aider/.asterismignore
   --test-cmd:        []
   --voice-language:  en
   --encoding:        utf-8
 
 Option settings:
-  - aiderignore: /Users/gauthier/Projects/aider/.aiderignore
+  - asterismignore: /Users/gauthier/Projects/aider/.asterismignore
   - anthropic_api_key: ...CQAA
   - apply: None
   - assistant_output_color: #0088ff
@@ -88273,13 +88273,13 @@ Defaults:
   --tool-error-color:#FF2222
   --assistant-output-color:#0088ff
   --code-theme:      default
-  --aiderignore:     /Users/gauthier/Projects/aider/.aiderignore
+  --asterismignore:     /Users/gauthier/Projects/aider/.asterismignore
   --test-cmd:        []
   --voice-language:  en
   --encoding:        utf-8
 
 Option settings:
-  - aiderignore: /Users/gauthier/Projects/aider/.aiderignore
+  - asterismignore: /Users/gauthier/Projects/aider/.asterismignore
   - anthropic_api_key: ...CQAA
   - apply: None
   - assistant_output_color: #0088ff
@@ -88420,13 +88420,13 @@ Defaults:
   --tool-error-color:#FF2222
   --assistant-output-color:#0088ff
   --code-theme:      default
-  --aiderignore:     /Users/gauthier/Projects/aider/.aiderignore
+  --asterismignore:     /Users/gauthier/Projects/aider/.asterismignore
   --test-cmd:        []
   --voice-language:  en
   --encoding:        utf-8
 
 Option settings:
-  - aiderignore: /Users/gauthier/Projects/aider/.aiderignore
+  - asterismignore: /Users/gauthier/Projects/aider/.asterismignore
   - anthropic_api_key: ...CQAA
   - apply: None
   - assistant_output_color: #0088ff
@@ -88567,13 +88567,13 @@ Defaults:
   --tool-error-color:#FF2222
   --assistant-output-color:#0088ff
   --code-theme:      default
-  --aiderignore:     /Users/gauthier/Projects/aider/.aiderignore
+  --asterismignore:     /Users/gauthier/Projects/aider/.asterismignore
   --test-cmd:        []
   --voice-language:  en
   --encoding:        utf-8
 
 Option settings:
-  - aiderignore: /Users/gauthier/Projects/aider/.aiderignore
+  - asterismignore: /Users/gauthier/Projects/aider/.asterismignore
   - anthropic_api_key: ...CQAA
   - apply: None
   - assistant_output_color: #0088ff
@@ -88714,13 +88714,13 @@ Defaults:
   --tool-error-color:#FF2222
   --assistant-output-color:#0088ff
   --code-theme:      default
-  --aiderignore:     /Users/gauthier/Projects/aider/.aiderignore
+  --asterismignore:     /Users/gauthier/Projects/aider/.asterismignore
   --test-cmd:        []
   --voice-language:  en
   --encoding:        utf-8
 
 Option settings:
-  - aiderignore: /Users/gauthier/Projects/aider/.aiderignore
+  - asterismignore: /Users/gauthier/Projects/aider/.asterismignore
   - anthropic_api_key: ...CQAA
   - apply: None
   - assistant_output_color: #0088ff
@@ -88861,13 +88861,13 @@ Defaults:
   --tool-error-color:#FF2222
   --assistant-output-color:#0088ff
   --code-theme:      default
-  --aiderignore:     /Users/gauthier/Projects/aider/.aiderignore
+  --asterismignore:     /Users/gauthier/Projects/aider/.asterismignore
   --test-cmd:        []
   --voice-language:  en
   --encoding:        utf-8
 
 Option settings:
-  - aiderignore: /Users/gauthier/Projects/aider/.aiderignore
+  - asterismignore: /Users/gauthier/Projects/aider/.asterismignore
   - anthropic_api_key: ...CQAA
   - apply: None
   - assistant_output_color: #0088ff
@@ -89008,13 +89008,13 @@ Defaults:
   --tool-error-color:#FF2222
   --assistant-output-color:#0088ff
   --code-theme:      default
-  --aiderignore:     /Users/gauthier/Projects/aider/.aiderignore
+  --asterismignore:     /Users/gauthier/Projects/aider/.asterismignore
   --test-cmd:        []
   --voice-language:  en
   --encoding:        utf-8
 
 Option settings:
-  - aiderignore: /Users/gauthier/Projects/aider/.aiderignore
+  - asterismignore: /Users/gauthier/Projects/aider/.asterismignore
   - anthropic_api_key: ...CQAA
   - apply: None
   - assistant_output_color: #0088ff
@@ -91436,13 +91436,13 @@ Defaults:
   --tool-error-color:#FF2222
   --assistant-output-color:#0088ff
   --code-theme:      default
-  --aiderignore:     /Users/gauthier/Projects/aider/.aiderignore
+  --asterismignore:     /Users/gauthier/Projects/aider/.asterismignore
   --test-cmd:        []
   --voice-language:  en
   --encoding:        utf-8
 
 Option settings:
-  - aiderignore: /Users/gauthier/Projects/aider/.aiderignore
+  - asterismignore: /Users/gauthier/Projects/aider/.asterismignore
   - anthropic_api_key: ...CQAA
   - apply: None
   - assistant_output_color: #0088ff

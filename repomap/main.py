@@ -511,9 +511,6 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
     #     print(shtab.complete(parser, shell=args.shell_completions))
     #     sys.exit(0)
 
-    if git is None:
-        args.git = False
-
     # Analytics - removed
     # if args.analytics_disable:
     #     analytics = Analytics(permanently_disable=True)
@@ -669,14 +666,13 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
 
     git_dname = None
     if len(all_files) == 1 and Path(all_files[0]).is_dir():
-        if args.git:  # args.git doesn't exist, set default
-            git_dname = str(Path(all_files[0]).resolve())
-            fnames = []
+        git_dname = str(Path(all_files[0]).resolve())
+        fnames = []
 
     # We can't know the git repo for sure until after parsing the args.
     # If we guessed wrong, reparse because that changes things like
     # the location of the config.yml and history files.
-    if args.git and not force_git_root and git is not None:
+    if not force_git_root and git is not None:
         right_repo_root = guessed_wrong_repo(io, git_root, fnames, git_dname)
         if right_repo_root:
             # analytics.event("exit", reason="Recursing with correct repo")
@@ -701,11 +697,10 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
     # if args.check_update:
     #     check_version(io, verbose=args.verbose)
 
-    if args.git:
-        git_root = setup_git(git_root, io)
-        # gitignore checking removed
-        # if args.gitignore:
-        #     check_gitignore(git_root, io)
+    git_root = setup_git(git_root, io)
+    # gitignore checking removed
+    # if args.gitignore:
+    #     check_gitignore(git_root, io)
 
     if args.verbose:
         # show = format_settings(parser, args)
@@ -931,25 +926,24 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
     #             return 1
 
     repo = None
-    if args.git:
-        try:
-            repo = GitRepo(
-                io,
-                fnames,
-                git_dname,
-                args.aiderignore,
-                models=main_model.commit_message_models(),
-                # attribute_author=args.attribute_author,
-                # attribute_committer=args.attribute_committer,
-                # attribute_commit_message_author=args.attribute_commit_message_author,
-                # attribute_commit_message_committer=args.attribute_commit_message_committer,
-                # commit_prompt=args.commit_prompt,
-                subtree_only=args.subtree_only,
-                # git_commit_verify=args.git_commit_verify,
-                # attribute_co_authored_by=args.attribute_co_authored_by,
-            )
-        except FileNotFoundError:
-            pass
+    try:
+        repo = GitRepo(
+            io,
+            fnames,
+            git_dname,
+            args.asterismignore,
+            models=main_model.commit_message_models(),
+            # attribute_author=args.attribute_author,
+            # attribute_committer=args.attribute_committer,
+            # attribute_commit_message_author=args.attribute_commit_message_author,
+            # attribute_commit_message_committer=args.attribute_commit_message_committer,
+            # commit_prompt=args.commit_prompt,
+            subtree_only=args.subtree_only,
+            # git_commit_verify=args.git_commit_verify,
+            # attribute_co_authored_by=args.attribute_co_authored_by,
+        )
+    except FileNotFoundError:
+        pass
 
     # if not args.skip_sanity_check_repo:
     #     if not sanity_check_repo(repo, io):
@@ -1016,7 +1010,7 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
             map_tokens=map_tokens,
             verbose=args.verbose,
             # stream=args.stream,
-            use_git=args.git,
+            use_git=True,
             # restore_chat_history=args.restore_chat_history,
             # auto_lint=args.auto_lint,
             # auto_test=args.auto_test,
@@ -1053,8 +1047,8 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
     ignores = []
     if git_root:
         ignores.append(str(Path(git_root) / ".gitignore"))
-    if args.aiderignore:
-        ignores.append(args.aiderignore)
+    if args.asterismignore:
+        ignores.append(args.asterismignore)
 
     # if args.watch_files:
     #     file_watcher = FileWatcher(

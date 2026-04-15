@@ -51,10 +51,10 @@ def set_git_env(var_name, value, original_value):
 
 class GitRepo:
     repo = None
-    aider_ignore_file = None
-    aider_ignore_spec = None
-    aider_ignore_ts = 0
-    aider_ignore_last_check = 0
+    asterism_ignore_file = None
+    asterism_ignore_spec = None
+    asterism_ignore_ts = 0
+    asterism_ignore_last_check = 0
     subtree_only = False
     ignore_file_cache = {}
     git_repo_error = None
@@ -64,7 +64,7 @@ class GitRepo:
         io,
         fnames,
         git_dname,
-        aider_ignore_file=None,
+        asterism_ignore_file=None,
         models=None,
         attribute_author=True,
         attribute_committer=True,
@@ -125,8 +125,8 @@ class GitRepo:
         self.repo = git.Repo(repo_paths.pop(), odbt=git.GitDB)
         self.root = utils.safe_abs_path(self.repo.working_tree_dir)
 
-        if aider_ignore_file:
-            self.aider_ignore_file = Path(aider_ignore_file)
+        if asterism_ignore_file:
+            self.asterism_ignore_file = Path(asterism_ignore_file)
 
     def commit(self, fnames=None, context=None, message=None, aider_edits=False, coder=None):
         """
@@ -497,25 +497,25 @@ class GitRepo:
         self.normalized_path[orig_path] = path
         return path
 
-    def refresh_aider_ignore(self):
-        if not self.aider_ignore_file:
+    def refresh_asterism_ignore(self):
+        if not self.asterism_ignore_file:
             return
 
         current_time = time.time()
-        if current_time - self.aider_ignore_last_check < 1:
+        if current_time - self.asterism_ignore_last_check < 1:
             return
 
-        self.aider_ignore_last_check = current_time
+        self.asterism_ignore_last_check = current_time
 
-        if not self.aider_ignore_file.is_file():
+        if not self.asterism_ignore_file.is_file():
             return
 
-        mtime = self.aider_ignore_file.stat().st_mtime
-        if mtime != self.aider_ignore_ts:
-            self.aider_ignore_ts = mtime
+        mtime = self.asterism_ignore_file.stat().st_mtime
+        if mtime != self.asterism_ignore_ts:
+            self.asterism_ignore_ts = mtime
             self.ignore_file_cache = {}
-            lines = self.aider_ignore_file.read_text().splitlines()
-            self.aider_ignore_spec = pathspec.PathSpec.from_lines(
+            lines = self.asterism_ignore_file.read_text().splitlines()
+            self.asterism_ignore_spec = pathspec.PathSpec.from_lines(
                 pathspec.patterns.GitWildMatchPattern,
                 lines,
             )
@@ -530,7 +530,7 @@ class GitRepo:
             return False
 
     def ignored_file(self, fname):
-        self.refresh_aider_ignore()
+        self.refresh_asterism_ignore()
 
         if fname in self.ignore_file_cache:
             return self.ignore_file_cache[fname]
@@ -554,7 +554,7 @@ class GitRepo:
             if cwd_path not in fname_path.parents and fname_path != cwd_path:
                 return True
 
-        if not self.aider_ignore_file or not self.aider_ignore_file.is_file():
+        if not self.asterism_ignore_file or not self.asterism_ignore_file.is_file():
             return False
 
         try:
@@ -562,7 +562,7 @@ class GitRepo:
         except ValueError:
             return True
 
-        return self.aider_ignore_spec.match_file(fname)
+        return self.asterism_ignore_spec.match_file(fname)
 
     def path_in_repo(self, path):
         if not self.repo:

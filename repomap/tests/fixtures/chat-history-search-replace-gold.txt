@@ -2836,7 +2836,7 @@ class GitRepo:
                 io,
                 fnames,
                 git_dname or ".",
-                args.aiderignore,
+                args.asterismignore,
                 models=main_model.commit_message_models(),
                 attribute_author=args.attribute_author,
                 attribute_committer=args.attribute_committer,
@@ -2854,7 +2854,7 @@ class GitRepo:
                 io,
                 fnames,
                 git_dname or ".",
-                args.aiderignore,
+                args.asterismignore,
                 models=main_model.commit_message_models(),
                 attribute_author=args.attribute_author,
                 attribute_committer=args.attribute_committer,
@@ -5463,7 +5463,7 @@ aider/coders/base_coder.py
 
 @@@ #### add tests for /read to make sure it adds an `abs_read_only_fnames` and /drop removes it @@@@@@@@@@@@@@@@@@@@
 @@@ SEARCH: tests/basic/test_commands.py @@@@@@@@@@@@@@@@@@@@
-    def test_cmd_add_aiderignored_file(self):
+    def test_cmd_add_asterismignored_file(self):
         with GitTemporaryDirectory():
             repo = git.Repo()
 
@@ -5475,7 +5475,7 @@ aider/coders/base_coder.py
             repo.git.add(str(fname2))
             repo.git.commit("-m", "initial")
 
-            aignore = Path(".aiderignore")
+            aignore = Path(".asterismignore")
             aignore.write_text(f"{fname1}\n{fname2}\ndir\n")
 
             io = InputOutput(yes=True)
@@ -5505,7 +5505,7 @@ aider/coders/base_coder.py
 
     def test_cmd_ask(self):
 @@@@@@@@@@@@@@@@@@@@
-    def test_cmd_add_aiderignored_file(self):
+    def test_cmd_add_asterismignored_file(self):
         with GitTemporaryDirectory():
             repo = git.Repo()
 
@@ -5517,7 +5517,7 @@ aider/coders/base_coder.py
             repo.git.add(str(fname2))
             repo.git.commit("-m", "initial")
 
-            aignore = Path(".aiderignore")
+            aignore = Path(".asterismignore")
             aignore.write_text(f"{fname1}\n{fname2}\ndir\n")
 
             io = InputOutput(yes=True)
@@ -9995,7 +9995,7 @@ aider/website/docs/leaderboards/index.md
                 io,
                 fnames,
                 git_dname,
-                args.aiderignore,
+                args.asterismignore,
                 models=main_model.commit_message_models(),
                 attribute_author=args.attribute_author,
                 attribute_committer=args.attribute_committer,
@@ -10008,7 +10008,7 @@ aider/website/docs/leaderboards/index.md
                 io,
                 fnames,
                 git_dname,
-                args.aiderignore,
+                args.asterismignore,
                 models=main_model.commit_message_models(),
                 attribute_author=args.attribute_author,
                 attribute_committer=args.attribute_committer,
@@ -10682,7 +10682,7 @@ aider/website/docs/usage/modes.md
                 fname = Path(self.coder.root) / word
 
             if self.coder.repo and self.coder.repo.ignored_file(fname):
-                self.io.tool_error(f"Skipping {fname} that matches aiderignore spec.")
+                self.io.tool_error(f"Skipping {fname} that matches asterismignore spec.")
                 continue
 
             if fname.exists():
@@ -10750,7 +10750,7 @@ aider/website/docs/usage/modes.md
                 fname = Path(self.coder.root) / word
 
             if self.coder.repo and self.coder.repo.ignored_file(fname):
-                self.io.tool_error(f"Skipping {fname} that matches aiderignore spec.")
+                self.io.tool_error(f"Skipping {fname} that matches asterismignore spec.")
                 continue
 
             if fname.exists():
@@ -12224,7 +12224,7 @@ HISTORY.md
 
 - Issue a warning if user adds too much code to the chat.
   - https://aider.chat/docs/faq.html#how-can-i-add-all-the-files-to-the-chat
-- Vocally refuse to add files to the chat that match `.aiderignore`
+- Vocally refuse to add files to the chat that match `.asterismignore`
   - Prevents bug where subsequent git commit of those files will fail.
 - Added `--openai-organization-id` argument.
 - Show the user a FAQ link if edits fail to apply.
@@ -14428,7 +14428,7 @@ aider/coders/base_coder.py
             fname = str(fname.resolve())
 
             if self.repo and self.repo.ignored_file(fname):
-                self.io.tool_error(f"Skipping {fname} that matches aiderignore spec.")
+                self.io.tool_error(f"Skipping {fname} that matches asterismignore spec.")
                 continue
 
             self.abs_fnames.add(fname)
@@ -14626,7 +14626,7 @@ aider/coders/base_coder.py
             fname = str(fname.resolve())
 
             if self.repo and self.repo.ignored_file(fname):
-                self.io.tool_error(f"Skipping {fname} that matches aiderignore spec.")
+                self.io.tool_error(f"Skipping {fname} that matches asterismignore spec.")
                 continue
 
             self.file_manager.add_file(fname)
@@ -24057,13 +24057,13 @@ Defaults:
   --tool-error-color:#FF2222
   --assistant-output-color:#0088ff
   --code-theme:      default
-  --aiderignore:     /Users/gauthier/Projects/aider/.aiderignore
+  --asterismignore:     /Users/gauthier/Projects/aider/.asterismignore
   --test-cmd:        []
   --voice-language:  en
   --encoding:        utf-8
 
 Option settings:
-  - aiderignore: /Users/gauthier/Projects/aider/.aiderignore
+  - asterismignore: /Users/gauthier/Projects/aider/.asterismignore
   - anthropic_api_key: ...CQAA
   - apply: None
   - assistant_output_color: #0088ff

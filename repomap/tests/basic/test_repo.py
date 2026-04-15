@@ -510,7 +510,7 @@ class TestRepo(unittest.TestCase):
             self.assertIn(str(fname), fnames)
             self.assertIn(str(fname2), fnames)
 
-    def test_get_tracked_files_with_aiderignore(self):
+    def test_get_tracked_files_with_asterismignore(self):
         with GitTemporaryDirectory():
             # new repo
             raw_repo = git.Repo()
@@ -520,8 +520,8 @@ class TestRepo(unittest.TestCase):
             fname.touch()
             raw_repo.git.add(str(fname))
 
-            aiderignore = Path(".aiderignore")
-            git_repo = GitRepo(InputOutput(), None, None, str(aiderignore))
+            asterismignore = Path(".asterismignore")
+            git_repo = GitRepo(InputOutput(), None, None, str(asterismignore))
 
             # better be there
             fnames = git_repo.get_tracked_files()
@@ -542,7 +542,7 @@ class TestRepo(unittest.TestCase):
             self.assertIn(str(fname), fnames)
             self.assertIn(str(fname2), fnames)
 
-            aiderignore.write_text("new.txt\n")
+            asterismignore.write_text("new.txt\n")
             time.sleep(2)
 
             # new.txt should be gone!
@@ -554,7 +554,7 @@ class TestRepo(unittest.TestCase):
             # The mtime doesn't change, even if I time.sleep(1)
             # Before doing this write_text()!?
             #
-            # aiderignore.write_text("new2.txt\n")
+            # asterismignore.write_text("new2.txt\n")
             # new2.txt should be gone!
             # fnames = git_repo.get_tracked_files()
             # self.assertIn(str(fname), fnames)

@@ -16,7 +16,7 @@ from repomap.args_formatter import (
 )
 
 
-def resolve_aiderignore_path(path_str, git_root=None):
+def resolve_asterismignore_path(path_str, git_root=None):
     path = Path(path_str)
     if path.is_absolute():
         return str(path)
@@ -86,26 +86,20 @@ def get_parser(default_config_files, git_root):
     # File filtering
     group = parser.add_argument_group("File Filtering")
     group.add_argument(
-        "--git",
-        action=argparse.BooleanOptionalAction,
-        default=True,
-        help="Enable/disable looking for a git repo (default: True)",
-    )
-    group.add_argument(
         "--add-gitignore-files",
         action=argparse.BooleanOptionalAction,
         default=False,
         help="Enable/disable the addition of files listed in .gitignore to analysis scope",
     )
-    default_aiderignore_file = (
-        os.path.join(git_root, ".aiderignore") if git_root else ".aiderignore"
+    default_asterismignore_file = (
+        os.path.join(git_root, ".asterismignore") if git_root else ".asterismignore"
     )
     group.add_argument(
-        "--aiderignore",
-        metavar="AIDERIGNORE",
-        type=lambda path_str: resolve_aiderignore_path(path_str, git_root),
-        default=default_aiderignore_file,
-        help="Specify the ignore file (default: .aiderignore in git root)",
+        "--asterismignore",
+        metavar="ASTERISMIGNORE",
+        type=lambda path_str: resolve_asterismignore_path(path_str, git_root),
+        default=default_asterismignore_file,
+        help="Specify the ignore file (default: .asterismignore in git root)",
     ).complete = shtab.FILE
     group.add_argument(
         "--subtree-only",
@@ -152,7 +146,7 @@ map-tokens: 4096
 
 # File filtering
 add-gitignore-files: false
-aiderignore: .aiderignore
+asterismignore: .asterismignore
 subtree-only: false
 
 # Output
