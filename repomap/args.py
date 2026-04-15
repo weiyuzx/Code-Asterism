@@ -41,7 +41,7 @@ def get_parser(default_config_files, git_root):
             asterisk_config_files.append(git_conf)
 
     parser = configargparse.ArgumentParser(
-        description="Asterism generates repository maps using AST parsing and PageRank ranking",
+        description="Asterism 可以使用 AST 解析和 PageRank 排序生成 RepoMap 代码仓库地图",
         add_config_file_help=True,
         default_config_files=asterisk_config_files,
         config_file_parser_class=configargparse.YAMLConfigFileParser,
@@ -49,73 +49,71 @@ def get_parser(default_config_files, git_root):
         ignore_unknown_config_file_keys=True,  # Ignore unknown keys like --model
     )
 
-    # Model settings (minimal for repomap)
-    group = parser.add_argument_group("Model Settings")
+    # 相关信息
+    group = parser.add_argument_group("相关信息")
     group.add_argument(
-        "--model",
-        metavar="MODEL",
-        default=None,
-        help="Model name (for token counting, not required for repomap)",
+        "--version",
+        action="version",
+        version=f"%(prog)s {__version__}",
+        help="显示版本号",
     )
 
-    # Repomap settings
-    group = parser.add_argument_group("Repomap Settings")
-    group.add_argument(
-        "--map-tokens",
-        type=int,
-        default=None,
-        help="Suggested number of tokens to use for repo map, use 0 to disable",
-    )
-
-    # File filtering
-    group = parser.add_argument_group("File Filtering")
-    group.add_argument(
-        "--add-gitignore-files",
-        action=argparse.BooleanOptionalAction,
-        default=False,
-        help="Enable/disable the addition of files listed in .gitignore to analysis scope",
-    )
-    default_asterismignore_file = (
-        os.path.join(git_root, ".asterismignore") if git_root else ".asterismignore"
-    )
-    group.add_argument(
-        "--asterismignore",
-        metavar="ASTERISMIGNORE",
-        type=lambda path_str: resolve_asterismignore_path(path_str, git_root),
-        default=default_asterismignore_file,
-        help="Specify the ignore file (default: .asterismignore in git root)",
-    ).complete = shtab.FILE
-    group.add_argument(
-        "--subtree-only",
-        action="store_true",
-        help="Only consider files in the current subtree of the git repository",
-        default=False,
-    )
-
-    # Output settings
-    group = parser.add_argument_group("Output Settings")
+    # 输出设置
+    group = parser.add_argument_group("输出设置")
     group.add_argument(
         "--show-repo-map",
         action="store_true",
-        help="Display the repository map and exit",
+        help="显示仓库地图",
         default=False,
     )
     group.add_argument(
         "-v",
         "--verbose",
         action="store_true",
-        help="Enable verbose output (show processing details and token counts)",
+        help="启用详细输出",
         default=False,
     )
 
-    # Version
-    group = parser.add_argument_group("Information")
+    # RepoMap Token控制
+    group = parser.add_argument_group("RepoMap Token控制")
     group.add_argument(
-        "--version",
-        action="version",
-        version=f"%(prog)s {__version__}",
-        help="Show the version number and exit",
+        "--model",
+        metavar="MODEL",
+        default=None,
+        help="指定使用 RepoMap 的模型以匹配其 tokenizer （默认使用 gpt-4o 的 o200k_base 词表）",
     )
+    group.add_argument(
+        "--map-tokens",
+        metavar="MAP_TOKENS",
+        type=int,
+        default=None,
+        help="指定生成 RepoMap 的 token 数量上限（默认 4096）",
+    )
+
+    # RepoMap分析范围
+    group = parser.add_argument_group("RepoMap分析范围")
+    group.add_argument(
+        "--subtree-only",
+        action="store_true",
+        help="指定纳入分析的子目录（默认分析整个仓库）",
+        default=False,
+    )
+    group.add_argument(
+        "--add-gitignore-files",
+        action=argparse.BooleanOptionalAction,
+        default=False,
+        help="是否将 .gitignore 里列的文件清单纳入分析范围（默认不纳入）",
+    )
+    default_asterismignore_file = (
+        os.path.join(git_root, ".asterismignore") if git_root else ".asterismignore"
+    )
+    group.add_argument(
+        "--asterismignore",
+        metavar="FILE_NAME",
+        type=lambda path_str: resolve_asterismignore_path(path_str, git_root),
+        default=default_asterismignore_file,
+        help="指定忽略规则文件（默认 .asterismignore ）",
+    ).complete = shtab.FILE
 
     return parser
 
