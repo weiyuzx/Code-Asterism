@@ -46,14 +46,13 @@ class RepoMap:
 
     def __init__(
         self,
-        map_tokens=1024,
+        map_tokens=4096,
         root=None,
         main_model=None,
         io=None,
         repo_content_prefix=None,
         verbose=False,
         max_context_window=None,
-        map_mul_no_files=8,
         refresh="auto",
     ):
         self.io = io
@@ -68,7 +67,6 @@ class RepoMap:
         self.cache_threshold = 0.95
 
         self.max_map_tokens = map_tokens
-        self.map_mul_no_files = map_mul_no_files
         self.max_context_window = max_context_window
 
         self.repo_content_prefix = repo_content_prefix
@@ -80,11 +78,6 @@ class RepoMap:
         self.map_cache = {}
         self.map_processing_time = 0
         self.last_map = None
-
-        if self.verbose:
-            self.io.tool_output(
-                f"RepoMap initialized with map_mul_no_files: {self.map_mul_no_files}"
-            )
 
     def token_count(self, text):
         len_text = len(text)
@@ -118,18 +111,6 @@ class RepoMap:
             mentioned_idents = set()
 
         max_map_tokens = self.max_map_tokens
-
-        # With no files in the chat, give a bigger view of the entire repo
-        padding = 4096
-        if max_map_tokens and self.max_context_window:
-            target = min(
-                int(max_map_tokens * self.map_mul_no_files),
-                self.max_context_window - padding,
-            )
-        else:
-            target = 0
-        if not chat_files and self.max_context_window and target > 0:
-            max_map_tokens = target
 
         try:
             files_listing = self.get_ranked_tags_map(

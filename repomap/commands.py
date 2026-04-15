@@ -1140,7 +1140,6 @@ class Commands:
             edit_format="help",
             summarize_from_coder=False,
             map_tokens=512,
-            map_mul_no_files=1,
         )
         user_msg = self.help.ask(args)
         user_msg += """
@@ -1153,17 +1152,14 @@ class Commands:
 
         if self.coder.repo_map:
             map_tokens = self.coder.repo_map.max_map_tokens
-            map_mul_no_files = self.coder.repo_map.map_mul_no_files
         else:
             map_tokens = 0
-            map_mul_no_files = 1
 
         raise SwitchCoder(
             edit_format=self.coder.edit_format,
             summarize_from_coder=False,
             from_coder=coder,
             map_tokens=map_tokens,
-            map_mul_no_files=map_mul_no_files,
             show_announcements=False,
         )
 

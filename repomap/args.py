@@ -82,12 +82,6 @@ def get_parser(default_config_files, git_root):
         default=None,
         help="Suggested number of tokens to use for repo map, use 0 to disable",
     )
-    group.add_argument(
-        "--map-multiplier-no-files",
-        type=float,
-        default=2,
-        help="Multiplier for map tokens when no files are specified (default: 2)",
-    )
 
     # File filtering
     group = parser.add_argument_group("File Filtering")
@@ -154,8 +148,7 @@ def get_sample_config():
 # Create this file as .asterism.conf.yml in your project root
 
 # Repomap settings
-map-tokens: 1000
-map-multiplier-no-files: 2
+map-tokens: 4096
 
 # File filtering
 add-gitignore-files: false

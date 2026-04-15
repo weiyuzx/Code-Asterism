@@ -3041,7 +3041,7 @@ class RepoMap:
         repo_content_prefix=None,
         verbose=False,
         max_context_window=None,
-        map_mul_no_files=8,
+        
     ):
         self.io = io
         self.verbose = verbose
@@ -3054,7 +3054,6 @@ class RepoMap:
         self.cache_threshold = 0.95
 
         self.max_map_tokens = map_tokens
-        self.map_mul_no_files = map_mul_no_files
         self.max_context_window = max_context_window
 
         self.repo_content_prefix = repo_content_prefix
@@ -3076,7 +3075,7 @@ class RepoMap:
         repo_content_prefix=None,
         verbose=False,
         max_context_window=None,
-        map_mul_no_files=8,
+        
     ):
         self.io = io
         self.verbose = verbose
@@ -3089,7 +3088,6 @@ class RepoMap:
         self.cache_threshold = 0.95
 
         self.max_map_tokens = map_tokens
-        self.map_mul_no_files = map_mul_no_files
         self.max_context_window = max_context_window
 
         self.repo_content_prefix = repo_content_prefix
@@ -5116,7 +5114,7 @@ aider/coders/base_coder.py
         lint_cmds=None,
         test_cmd=None,
         aider_commit_hashes=None,
-        map_mul_no_files=8,
+        
         commands=None,
         summarizer=None,
         total_cost=0.0,
@@ -5148,7 +5146,7 @@ aider/coders/base_coder.py
         lint_cmds=None,
         test_cmd=None,
         aider_commit_hashes=None,
-        map_mul_no_files=8,
+        
         commands=None,
         summarizer=None,
         total_cost=0.0,
@@ -5229,7 +5227,7 @@ aider/coders/base_coder.py
         lint_cmds=None,
         test_cmd=None,
         aider_commit_hashes=None,
-        map_mul_no_files=8,
+        
         commands=None,
         summarizer=None,
         total_cost=0.0,
@@ -5285,7 +5283,7 @@ aider/coders/base_coder.py
         lint_cmds=None,
         test_cmd=None,
         aider_commit_hashes=None,
-        map_mul_no_files=8,
+        
         commands=None,
         summarizer=None,
         total_cost=0.0,
@@ -9048,7 +9046,7 @@ class Coder:
         lint_cmds=None,
         test_cmd=None,
         aider_commit_hashes=None,
-        map_mul_no_files=8,
+        
         commands=None,
         summarizer=None,
         total_cost=0.0,
@@ -9083,7 +9081,7 @@ class Coder:
         lint_cmds=None,
         test_cmd=None,
         aider_commit_hashes=None,
-        map_mul_no_files=8,
+        
         commands=None,
         summarizer=None,
         total_cost=0.0,
@@ -9120,7 +9118,7 @@ class Coder:
         lint_cmds=None,
         test_cmd=None,
         aider_commit_hashes=None,
-        map_mul_no_files=8,
+        
         commands=None,
         summarizer=None,
         total_cost=0.0,
@@ -9156,7 +9154,7 @@ class Coder:
         lint_cmds=None,
         test_cmd=None,
         aider_commit_hashes=None,
-        map_mul_no_files=8,
+        
         commands=None,
         summarizer=None,
         total_cost=0.0,
@@ -10123,7 +10121,6 @@ Both of these options are disabled by default, but can be useful for easily iden
             edit_format="help",
             summarize_from_coder=False,
             map_tokens=512,
-            map_mul_no_files=1,
             with_message=user_msg
         )
 @@@ REPLACE @@@@@@@@@@@@@@@@@@@@
@@ -10150,7 +10147,6 @@ Both of these options are disabled by default, but can be useful for easily iden
             edit_format="help",
             summarize_from_coder=False,
             map_tokens=512,
-            map_mul_no_files=1,
         )
 @@@@@@@@@@@@@@@@@@@@
         # Removed unused 'coder' variable
@@ -12464,7 +12460,7 @@ aider/coders/base_coder.py
         lint_cmds=None,
         test_cmd=None,
         aider_commit_hashes=None,
-        map_mul_no_files=8,
+        
         commands=None,
         summarizer=None,
         total_cost=0.0,
@@ -12495,7 +12491,7 @@ aider/coders/base_coder.py
         lint_cmds=None,
         test_cmd=None,
         aider_commit_hashes=None,
-        map_mul_no_files=8,
+        
         commands=None,
         summarizer=None,
         total_cost=0.0,
@@ -13973,7 +13969,7 @@ from aider.coders.commit_handler import CommitHandler
         lint_cmds=None,
         test_cmd=None,
         aider_commit_hashes=None,
-        map_mul_no_files=8,
+        
         commands=None,
         summarizer=None,
         total_cost=0.0,
@@ -14004,7 +14000,7 @@ from aider.coders.commit_handler import CommitHandler
         lint_cmds=None,
         test_cmd=None,
         aider_commit_hashes=None,
-        map_mul_no_files=8,
+        
         commands=None,
         summarizer=None,
         total_cost=0.0,
@@ -14333,7 +14329,7 @@ aider/coders/base_coder.py
         lint_cmds=None,
         test_cmd=None,
         aider_commit_hashes=None,
-        map_mul_no_files=8,
+        
         commands=None,
         summarizer=None,
         total_cost=0.0,
@@ -14469,7 +14465,6 @@ aider/coders/base_coder.py
                 self.gpt_prompts.repo_content_prefix,
                 self.verbose,
                 max_inp_tokens,
-                map_mul_no_files=map_mul_no_files,
             )
 
         self.summarizer = summarizer or ChatSummary(
@@ -14530,7 +14525,7 @@ aider/coders/base_coder.py
         lint_cmds=None,
         test_cmd=None,
         aider_commit_hashes=None,
-        map_mul_no_files=8,
+        
         commands=None,
         summarizer=None,
         total_cost=0.0,
@@ -14657,7 +14652,6 @@ aider/coders/base_coder.py
                 self.gpt_prompts.repo_content_prefix,
                 self.verbose,
                 max_inp_tokens,
-                map_mul_no_files=map_mul_no_files,
             )
 
         self.summarizer = summarizer or ChatSummary(
@@ -15855,7 +15849,7 @@ class Coder:
         lint_cmds=None,
         test_cmd=None,
         aider_commit_hashes=None,
-        map_mul_no_files=8,
+        
         commands=None,
         summarizer=None,
         total_cost=0.0,
@@ -15888,7 +15882,7 @@ class Coder:
         lint_cmds=None,
         test_cmd=None,
         aider_commit_hashes=None,
-        map_mul_no_files=8,
+        
         commands=None,
         summarizer=None,
         total_cost=0.0,
@@ -22340,7 +22334,7 @@ aider/repomap.py
         repo_content_prefix=None,
         verbose=False,
         max_context_window=None,
-        map_mul_no_files=8,
+        
         refresh="auto",
     ):
         self.io = io
@@ -22355,7 +22349,6 @@ aider/repomap.py
         self.cache_threshold = 0.95
 
         self.max_map_tokens = map_tokens
-        self.map_mul_no_files = map_mul_no_files
         self.max_context_window = max_context_window
 
         self.repo_content_prefix = repo_content_prefix
@@ -22374,7 +22367,7 @@ aider/repomap.py
         repo_content_prefix=None,
         verbose=False,
         max_context_window=None,
-        map_mul_no_files=8,
+        
         refresh="auto",
     ):
         self.io = io
@@ -22389,7 +22382,6 @@ aider/repomap.py
         self.cache_threshold = 0.95
 
         self.max_map_tokens = map_tokens
-        self.map_mul_no_files = map_mul_no_files
         self.max_context_window = max_context_window
 
         self.repo_content_prefix = repo_content_prefix
@@ -22503,7 +22495,7 @@ aider/repomap.py
         repo_content_prefix=None,
         verbose=False,
         max_context_window=None,
-        map_mul_no_files=8,
+        
         refresh="auto",
     ):
         self.io = io
@@ -22518,7 +22510,6 @@ aider/repomap.py
         self.cache_threshold = 0.95
 
         self.max_map_tokens = map_tokens
-        self.map_mul_no_files = map_mul_no_files
         self.max_context_window = max_context_window
 
         self.repo_content_prefix = repo_content_prefix
@@ -22537,7 +22528,7 @@ aider/repomap.py
         repo_content_prefix=None,
         verbose=False,
         max_context_window=None,
-        map_mul_no_files=8,
+        
         refresh="auto",
     ):
         self.io = io
@@ -22552,7 +22543,6 @@ aider/repomap.py
         self.cache_threshold = 0.95
 
         self.max_map_tokens = map_tokens
-        self.map_mul_no_files = map_mul_no_files
         self.max_context_window = max_context_window
 
         self.repo_content_prefix = repo_content_prefix
@@ -22775,7 +22765,6 @@ from pathlib import Path
         padding = 4096
         if max_map_tokens and self.max_context_window:
             target = min(
-                max_map_tokens * self.map_mul_no_files,
                 self.max_context_window - padding,
             )
         else:
@@ -22804,7 +22793,6 @@ from pathlib import Path
         padding = 4096
         if max_map_tokens and self.max_context_window:
             target = min(
-                max_map_tokens * self.map_mul_no_files,
                 self.max_context_window - padding,
             )
         else:
@@ -23090,7 +23078,7 @@ aider/repomap.py
         lint_cmds=None,
         test_cmd=None,
         aider_commit_hashes=None,
-        map_mul_no_files=8,
+        
         commands=None,
         summarizer=None,
         total_cost=0.0,
@@ -23121,7 +23109,7 @@ aider/repomap.py
         lint_cmds=None,
         test_cmd=None,
         aider_commit_hashes=None,
-        map_mul_no_files=8,
+        
         commands=None,
         summarizer=None,
         total_cost=0.0,
@@ -23138,7 +23126,6 @@ aider/repomap.py
                 self.gpt_prompts.repo_content_prefix,
                 self.verbose,
                 max_inp_tokens,
-                map_mul_no_files=map_mul_no_files,
             )
 @@@@@@@@@@@@@@@@@@@@
         if use_repo_map and self.repo and has_map_prompt:
@@ -23150,7 +23137,6 @@ aider/repomap.py
                 self.gpt_prompts.repo_content_prefix,
                 self.verbose,
                 max_inp_tokens,
-                map_mul_no_files=map_mul_no_files,
                 refresh=map_refresh,
             )
 @@@ REPLACE @@@@@@@@@@@@@@@@@@@@
@@ -23339,7 +23325,7 @@ aider/repomap.py
         lint_cmds=None,
         test_cmd=None,
         aider_commit_hashes=None,
-        map_mul_no_files=8,
+        
         commands=None,
         summarizer=None,
         total_cost=0.0,
@@ -23370,7 +23356,7 @@ aider/repomap.py
         lint_cmds=None,
         test_cmd=None,
         aider_commit_hashes=None,
-        map_mul_no_files=8,
+        
         commands=None,
         summarizer=None,
         total_cost=0.0,
@@ -23427,7 +23413,7 @@ aider/repomap.py
         lint_cmds=None,
         test_cmd=None,
         aider_commit_hashes=None,
-        map_mul_no_files=8,
+        
         commands=None,
         summarizer=None,
         total_cost=0.0,
@@ -23458,7 +23444,7 @@ aider/repomap.py
         lint_cmds=None,
         test_cmd=None,
         aider_commit_hashes=None,
-        map_mul_no_files=8,
+        
         commands=None,
         summarizer=None,
         total_cost=0.0,
@@ -25659,7 +25645,6 @@ pytest tests/basic/test_main.py::TestMain::test_return_coder
                 self.gpt_prompts.repo_content_prefix,
                 self.verbose,
                 max_inp_tokens,
-                map_mul_no_files=map_mul_no_files,
                 refresh=map_refresh,
             )
 @@@@@@@@@@@@@@@@@@@@
@@ -25682,7 +25667,6 @@ pytest tests/basic/test_main.py::TestMain::test_return_coder
                 self.gpt_prompts.repo_content_prefix,
                 self.verbose,
                 max_inp_tokens,
-                map_mul_no_files=map_multiplier_no_files,
                 refresh=map_refresh,
             )
 @@@ REPLACE @@@@@@@@@@@@@@@@@@@@
@@ -25762,7 +25746,6 @@ pytest tests/basic/test_main.py::TestMain::test_return_coder
                 self.gpt_prompts.repo_content_prefix,
                 self.verbose,
                 max_inp_tokens,
-                map_mul_no_files=map_multiplier_no_files,
                 refresh=map_refresh,
             )
 @@@@@@@@@@@@@@@@@@@@
@@ -25775,7 +25758,6 @@ pytest tests/basic/test_main.py::TestMain::test_return_coder
                 self.gpt_prompts.repo_content_prefix,
                 self.verbose,
                 max_inp_tokens,
-                map_mul_no_files=self.map_multiplier_no_files,
                 refresh=map_refresh,
             )
 @@@ REPLACE @@@@@@@@@@@@@@@@@@@@
@@ -25867,7 +25849,7 @@ class Coder:
         lint_cmds=None,
         test_cmd=None,
         aider_commit_hashes=None,
-        map_mul_no_files=8,
+        
         commands=None,
         summarizer=None,
         total_cost=0.0,
@@ -25900,14 +25882,13 @@ class Coder:
         lint_cmds=None,
         test_cmd=None,
         aider_commit_hashes=None,
-        map_mul_no_files=8,
+        
         commands=None,
         summarizer=None,
         total_cost=0.0,
         map_refresh="auto",
         cache_prompts=False,
     ):
-        self.map_multiplier_no_files = map_mul_no_files
 @@@ REPLACE @@@@@@@@@@@@@@@@@@@@
 
 
@@ -26391,7 +26372,6 @@ from prompt_toolkit.validation import Validator
                 return_coder=True,
             )
             self.assertIsInstance(coder, Coder)
-            self.assertEqual(coder.repo_map.map_mul_no_files, 5)
 @@@ REPLACE @@@@@@@@@@@@@@@@@@@@
 @@@ SEARCH: aider/repomap.py @@@@@@@@@@@@@@@@@@@@
     def __init__(
@@ -26403,7 +26383,7 @@ from prompt_toolkit.validation import Validator
         repo_content_prefix=None,
         verbose=False,
         max_context_window=None,
-        map_mul_no_files=8,
+        
         refresh="auto",
     ):
         self.io = io
@@ -26418,7 +26398,6 @@ from prompt_toolkit.validation import Validator
         self.cache_threshold = 0.95
 
         self.max_map_tokens = map_tokens
-        self.map_mul_no_files = map_mul_no_files
         self.max_context_window = max_context_window
 
         self.repo_content_prefix = repo_content_prefix
@@ -26440,7 +26419,7 @@ from prompt_toolkit.validation import Validator
         repo_content_prefix=None,
         verbose=False,
         max_context_window=None,
-        map_mul_no_files=8,
+        
         refresh="auto",
     ):
         self.io = io
@@ -26455,7 +26434,6 @@ from prompt_toolkit.validation import Validator
         self.cache_threshold = 0.95
 
         self.max_map_tokens = map_tokens
-        self.map_mul_no_files = map_mul_no_files
         self.max_context_window = max_context_window
 
         self.repo_content_prefix = repo_content_prefix
@@ -26469,7 +26447,6 @@ from prompt_toolkit.validation import Validator
         self.last_map = None
 
         if self.verbose:
-            self.io.tool_output(f"RepoMap initialized with map_mul_no_files: {self.map_mul_no_files}")
 @@@ REPLACE @@@@@@@@@@@@@@@@@@@@
 @@@ SHELL @@@@@@@@@@@@@@@@@@@@
 python -m unittest tests/basic/test_main.py
@@ -26935,7 +26912,6 @@ from aider.main import check_gitignore, main, setup_git, ApplyShellCommandsError
                 return_coder=True,
             )
             self.assertIsInstance(coder, Coder)
-            self.assertEqual(coder.repo_map.map_mul_no_files, 5)
 @@@@@@@@@@@@@@@@@@@@
     def test_return_coder(self):
         with GitTemporaryDirectory():
@@ -26964,7 +26940,6 @@ from aider.main import check_gitignore, main, setup_git, ApplyShellCommandsError
                 return_coder=True,
             )
             self.assertIsInstance(coder, Coder)
-            self.assertEqual(coder.repo_map.map_mul_no_files, 5)
 
     def test_apply_shell_commands(self):
         with GitTemporaryDirectory():

@@ -848,7 +848,7 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
                 # Return self instead of self for repomap
                 return self
             def get_repo_map_tokens(self):
-                map_tokens = 1024
+                map_tokens = 4096
                 max_inp_tokens = self.info.get("max_input_tokens")
                 if max_inp_tokens:
                     map_tokens = max_inp_tokens / 8
@@ -1027,7 +1027,6 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
             # analytics=analytics,
             # map_refresh=args.map_refresh,
             # cache_prompts=args.cache_prompts,
-            map_mul_no_files=args.map_multiplier_no_files,
             # num_cache_warming_pings=args.cache_keepalive_pings,
             # suggest_shell_commands=args.suggest_shell_commands,
             # chat_language=args.chat_language,
@@ -1107,6 +1106,13 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
     if args.show_repo_map:
         repo_map = coder.get_repo_map()
         if repo_map:
+            # Show token statistics first
+            token_count = main_model.token_count(repo_map)
+            char_count = len(repo_map)
+            file_size_kb = char_count / 1024
+            io.tool_output(
+                f"RepoMap尺寸统计：{token_count} tokens, {char_count} characters, {file_size_kb:.1f} KB"
+            )
             io.tool_output(repo_map)
         # analytics.event("exit", reason="Showed repo map")
         return

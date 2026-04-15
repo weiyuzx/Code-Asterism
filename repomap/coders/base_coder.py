@@ -326,7 +326,6 @@ class Coder:
         lint_cmds=None,
         test_cmd=None,
         aider_commit_hashes=None,
-        map_mul_no_files=8,
         commands=None,
         summarizer=None,
         total_cost=0.0,
@@ -509,7 +508,6 @@ class Coder:
                 self.gpt_prompts.repo_content_prefix,
                 self.verbose,
                 max_inp_tokens,
-                map_mul_no_files=map_mul_no_files,
                 refresh=map_refresh,
             )
 

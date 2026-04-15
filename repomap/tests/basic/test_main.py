@@ -721,17 +721,6 @@ class TestMain(TestCase):
             )
             self.assertIsNone(result)
 
-    def test_map_mul_option(self):
-        with GitTemporaryDirectory():
-            coder = main(
-                ["--map-mul", "5", "--exit", "--yes"],
-                input=DummyInput(),
-                output=DummyOutput(),
-                return_coder=True,
-            )
-            self.assertIsInstance(coder, Coder)
-            self.assertEqual(coder.repo_map.map_mul_no_files, 5)
-
     def test_suggest_shell_commands_default(self):
         with GitTemporaryDirectory():
             coder = main(
