@@ -49,15 +49,6 @@ def get_parser(default_config_files, git_root):
         ignore_unknown_config_file_keys=True,  # Ignore unknown keys like --model
     )
 
-    # Input files
-    group = parser.add_argument_group("Input")
-    group.add_argument(
-        "files",
-        metavar="FILE",
-        nargs="*",
-        help="Files or directories to analyze (optional)",
-    ).complete = shtab.FILE
-
     # Model settings (minimal for repomap)
     group = parser.add_argument_group("Model Settings")
     group.add_argument(
@@ -66,12 +57,6 @@ def get_parser(default_config_files, git_root):
         default=None,
         help="Model name (for token counting, not required for repomap)",
     )
-    group.add_argument(
-        "files",
-        metavar="FILE",
-        nargs="*",
-        help="Files or directories to analyze (optional)",
-    ).complete = shtab.FILE
 
     # Repomap settings
     group = parser.add_argument_group("Repomap Settings")

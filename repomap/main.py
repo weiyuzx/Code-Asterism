@@ -617,18 +617,10 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
     #     return
 
     # File handling for repomap
-    all_files = args.files or []
-    fnames = [str(Path(fn).resolve()) for fn in all_files]
+    fnames = []  # asterism doesn't use file focusing like aider
     read_only_fnames = []  # Not needed for repomap
 
-    # Directory validation - removed for repomap
-    # if len(all_files) > 1:
-    #     ...validation code...
-
     git_dname = None
-    if len(all_files) == 1 and Path(all_files[0]).is_dir():
-        git_dname = str(Path(all_files[0]).resolve())
-        fnames = []
 
     # We can't know the git repo for sure until after parsing the args.
     # If we guessed wrong, reparse because that changes things like
