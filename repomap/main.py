@@ -1050,19 +1050,27 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
     #     analytics.event("exit", reason="Completed lint/test/commit")
     #     return
 
-    if args.show_repo_map:
-        repo_map = coder.get_repo_map()
-        if repo_map:
-            # Show token statistics first
+    # 生成RepoMap文件
+    repo_map = coder.get_repo_map()
+    if repo_map:
+        try:
+            output_path = Path(args.output_file)
+            output_path.write_text(repo_map, encoding="utf-8")
+
+            # 显示统计信息
             token_count = main_model.token_count(repo_map)
             char_count = len(repo_map)
             file_size_kb = char_count / 1024
             io.tool_output(
+                f"已生成 RepoMap：{output_path}"
+            )
+            io.tool_output(
                 f"RepoMap尺寸统计：{token_count} tokens, {char_count} characters, {file_size_kb:.1f} KB"
             )
-            io.tool_output(repo_map)
-        # analytics.event("exit", reason="Showed repo map")
-        return
+        except Exception as e:
+            io.tool_error(f"写入文件失败：{e}")
+            return 1
+    return
 
     if args.apply:
         content = io.read_text(args.apply)

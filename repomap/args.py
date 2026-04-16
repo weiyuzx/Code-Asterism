@@ -52,30 +52,28 @@ def get_parser(default_config_files, git_root):
     # 相关信息
     group = parser.add_argument_group("相关信息")
     group.add_argument(
+        "-v",
         "--version",
         action="version",
         version=f"%(prog)s {__version__}",
         help="显示版本号",
     )
 
-    # 输出设置
-    group = parser.add_argument_group("输出设置")
+    # RepoMap输出设置
+    group = parser.add_argument_group("RepoMap输出设置")
     group.add_argument(
-        "--show-repo-map",
-        action="store_true",
-        help="显示仓库地图",
-        default=False,
+        "output_file",
+        nargs="?",
+        default="code-asterism.md",
+        metavar="REPO_MAP_FILE",
+        help="生成的 RepoMap 文件路径（默认：code-asterism.md）",
     )
     group.add_argument(
-        "-v",
         "--verbose",
         action="store_true",
         help="启用详细输出",
         default=False,
     )
-
-    # RepoMap Token控制
-    group = parser.add_argument_group("RepoMap Token控制")
     group.add_argument(
         "--model",
         metavar="MODEL",
@@ -95,7 +93,7 @@ def get_parser(default_config_files, git_root):
     group.add_argument(
         "--subtree-only",
         action="store_true",
-        help="指定纳入分析的子目录（默认分析整个仓库）",
+        help="仅分析当前子目录（默认分析整个仓库）",
         default=False,
     )
     group.add_argument(
@@ -109,7 +107,7 @@ def get_parser(default_config_files, git_root):
     )
     group.add_argument(
         "--asterismignore",
-        metavar="FILE_NAME",
+        metavar="IGNORE_FILE",
         type=lambda path_str: resolve_asterismignore_path(path_str, git_root),
         default=default_asterismignore_file,
         help="指定忽略规则文件（默认 .asterismignore ）",
