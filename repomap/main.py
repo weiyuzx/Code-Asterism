@@ -1057,16 +1057,21 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
             output_path = Path(args.output_file)
             output_path.write_text(repo_map, encoding="utf-8")
 
-            # 显示统计信息
-            token_count = main_model.token_count(repo_map)
-            char_count = len(repo_map)
-            file_size_kb = char_count / 1024
-            io.tool_output(
-                f"已生成 RepoMap：{output_path}"
-            )
-            io.tool_output(
-                f"RepoMap尺寸统计：{token_count} tokens, {char_count} characters, {file_size_kb:.1f} KB"
-            )
+            # 从repo_map中提取统计信息（复用repomap.py的计算结果）
+            import re
+            stats_match = re.search(r'RepoMap尺寸统计：(\d+) tokens, (\d+) characters, ([\d.]+) KB', repo_map)
+            if stats_match:
+                token_count = stats_match.group(1)
+                char_count = stats_match.group(2)
+                file_size_kb = stats_match.group(3)
+            else:
+                # 备选方案：重新计算
+                token_count = main_model.token_count(repo_map)
+                char_count = len(repo_map)
+                file_size_kb = f"{char_count / 1024:.1f}"
+
+            io.tool_output(f"已生成 RepoMap：{output_path}")
+            io.tool_output(f"RepoMap尺寸统计：{token_count} tokens, {char_count} characters, {file_size_kb} KB")
         except Exception as e:
             io.tool_error(f"写入文件失败：{e}")
             return 1

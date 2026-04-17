@@ -139,11 +139,28 @@ class RepoMap:
             other = ""
 
         if self.repo_content_prefix:
-            repo_content = self.repo_content_prefix.format(other=other)
+            repo_content = self.repo_content_prefix.format(other=other).rstrip()
         else:
             repo_content = ""
 
-        repo_content += files_listing
+        # 构建基础内容（头部+文件）
+        base_content = repo_content + "\n" + files_listing
+        base_token_count = self.token_count(base_content)
+        base_char_count = len(base_content)
+
+        # 用占位符构建临时统计行，计算其token和字符数
+        temp_stats_line = f"\nRepoMap尺寸统计：9999 tokens, 99999 characters, 99.9 KB"
+        stats_token_count = self.token_count(temp_stats_line)
+        stats_char_count = len(temp_stats_line)
+
+        # 计算最终统计值
+        token_count = int(base_token_count + stats_token_count)
+        char_count = base_char_count + stats_char_count
+        file_size_kb = char_count / 1024
+
+        # 添加统计行和文件内容
+        repo_content += f"\nRepoMap尺寸统计：{token_count} tokens, {char_count} characters, {file_size_kb:.1f} KB"
+        repo_content += "\n" + files_listing
 
         return repo_content
 
