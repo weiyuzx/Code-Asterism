@@ -1,5 +1,3 @@
-# This needs to sync with repomap/help_pats.py
-
 global-exclude .DS_Store
 
 recursive-exclude repomap/docs/examples *
