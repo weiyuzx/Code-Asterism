@@ -20,7 +20,6 @@ import pathspec
 from repomap import utils
 
 from .dump import dump  # noqa: F401
-from .waiting import WaitingSpinner
 
 ANY_GIT_ERROR += [
     OSError,

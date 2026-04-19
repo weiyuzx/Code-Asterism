@@ -19,7 +19,6 @@ from repomap import __version__
 from repomap.dump import dump  # noqa: F401
 from repomap.llm import litellm
 from repomap.openrouter import OpenRouterModelManager
-from repomap.sendchat import ensure_alternating_roles, sanity_check_messages
 from repomap.utils import check_pip_install_extra
 
 RETRY_TIMEOUT = 60
@@ -963,104 +962,6 @@ class Model(ModelSettings):
 
             os.environ[openai_api_key] = token
 
-    def send_completion(self, messages, functions, stream, temperature=None):
-        if os.environ.get("AIDER_SANITY_CHECK_TURNS"):
-            sanity_check_messages(messages)
-
-        if self.is_deepseek_r1():
-            messages = ensure_alternating_roles(messages)
-
-        kwargs = dict(
-            model=self.name,
-            stream=stream,
-        )
-
-        if self.use_temperature is not False:
-            if temperature is None:
-                if isinstance(self.use_temperature, bool):
-                    temperature = 0
-                else:
-                    temperature = float(self.use_temperature)
-
-            kwargs["temperature"] = temperature
-
-        if functions is not None:
-            function = functions[0]
-            kwargs["tools"] = [dict(type="function", function=function)]
-            kwargs["tool_choice"] = {"type": "function", "function": {"name": function["name"]}}
-        if self.extra_params:
-            kwargs.update(self.extra_params)
-        if self.is_ollama() and "num_ctx" not in kwargs:
-            num_ctx = int(self.token_count(messages) * 1.25) + 8192
-            kwargs["num_ctx"] = num_ctx
-        key = json.dumps(kwargs, sort_keys=True).encode()
-
-        # dump(kwargs)
-
-        hash_object = hashlib.sha1(key)
-        if "timeout" not in kwargs:
-            kwargs["timeout"] = request_timeout
-        if self.verbose:
-            dump(kwargs)
-        kwargs["messages"] = messages
-
-        # Are we using github copilot?
-        if "GITHUB_COPILOT_TOKEN" in os.environ:
-            if "extra_headers" not in kwargs:
-                kwargs["extra_headers"] = {
-                    "Editor-Version": f"aider/{__version__}",
-                    "Copilot-Integration-Id": "vscode-chat",
-                }
-
-            self.github_copilot_token_to_open_ai_key(kwargs["extra_headers"])
-
-        res = litellm.completion(**kwargs)
-        return hash_object, res
-
-    def simple_send_with_retries(self, messages):
-        from repomap.exceptions import LiteLLMExceptions
-
-        litellm_ex = LiteLLMExceptions()
-        if "deepseek-reasoner" in self.name:
-            messages = ensure_alternating_roles(messages)
-        retry_delay = 0.125
-
-        if self.verbose:
-            dump(messages)
-
-        while True:
-            try:
-                kwargs = {
-                    "messages": messages,
-                    "functions": None,
-                    "stream": False,
-                }
-
-                _hash, response = self.send_completion(**kwargs)
-                if not response or not hasattr(response, "choices") or not response.choices:
-                    return None
-                res = response.choices[0].message.content
-                from repomap.reasoning_tags import remove_reasoning_content
-
-                return remove_reasoning_content(res, self.reasoning_tag)
-
-            except litellm_ex.exceptions_tuple() as err:
-                ex_info = litellm_ex.get_ex_info(err)
-                print(str(err))
-                if ex_info.description:
-                    print(ex_info.description)
-                should_retry = ex_info.retry
-                if should_retry:
-                    retry_delay *= 2
-                    if retry_delay > RETRY_TIMEOUT:
-                        should_retry = False
-                if not should_retry:
-                    return None
-                print(f"Retrying in {retry_delay:.1f} seconds...")
-                time.sleep(retry_delay)
-                continue
-            except AttributeError:
-                return None
 
 
 def register_models(model_settings_fnames):

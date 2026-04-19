@@ -2,7 +2,6 @@ import json
 import os
 import re
 import sys
-import webbrowser
 from dataclasses import fields
 from pathlib import Path
 
@@ -11,16 +10,13 @@ try:
 except ImportError:
     git = None
 
-from repomap import __version__, models, urls
+from repomap import models
 from repomap.args import get_parser
-from repomap.coders import Coder
-from repomap.coders.base_coder import UnknownEditFormat
-from repomap.commands import Commands, SwitchCoder
-from repomap.history import ChatSummary
 from repomap.io import InputOutput
 from repomap.llm import litellm  # noqa: F401; properly init litellm on launch
 from repomap.models import ModelSettings
 from repomap.repo import ANY_GIT_ERROR, GitRepo
+from repomap.repomap import RepoMap
 from repomap.report import report_uncaught_exceptions
 
 
@@ -190,7 +186,7 @@ def check_gitignore(git_root, io, ask=True):
 
 
 
-def main(argv=None, input=None, output=None, force_git_root=None, return_coder=False):
+def main(argv=None, input=None, output=None, force_git_root=None):
     report_uncaught_exceptions()
 
     if argv is None:
@@ -220,7 +216,7 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
 
     parser = get_parser(default_config_files, git_root)
     try:
-        args, unknown = parser.parse_known_args(argv)
+        args, _ = parser.parse_known_args(argv)
     except AttributeError as e:
         if all(word in str(e) for word in ["bool", "object", "has", "no", "attribute", "strip"]):
             if check_config_files_for_yes(default_config_files):
@@ -237,7 +233,7 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
 
     parser = get_parser(default_config_files, git_root)
 
-    args, unknown = parser.parse_known_args(argv)
+    args, _ = parser.parse_known_args(argv)
 
     # Parse final arguments
     args = parser.parse_args(argv)
@@ -348,35 +344,8 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
     #     os.environ["OPENAI_ORGANIZATION"] = args.openai_organization_id
 
     # Analytics - disabled for repomap
-    analytics = None
-    # analytics = Analytics(
-    #     logfile=args.analytics_log,
-    #     permanently_disable=args.analytics_disable,
-    #     posthog_host=args.analytics_posthog_host,
-    #     posthog_project_api_key=args.analytics_posthog_project_api_key,
-    # )
-    # if args.analytics is not False:
-    #     if analytics.need_to_ask(args.analytics):
-    #         io.tool_output(
-    #             "Aider respects your privacy and never collects your code, chat messages, keys or"
-    #             " personal info."
-    #         )
-    #         io.tool_output(f"For more info: {urls.analytics}")
-    #         disable = not io.confirm_ask(
-    #             "Allow collection of anonymous analytics to help improve aider?"
-    #         )
-
-    #         analytics.asked_opt_in = True
-    #         if disable:
-    #             analytics.disable(permanently=True)
-    #             io.tool_output("Analytics have been permanently disabled.")
-    #
-    #         analytics.save_data()
-    #         io.tool_output()
-
     # File handling for repomap
     fnames = []  # asterism doesn't use file focusing like aider
-    read_only_fnames = []  # Not needed for repomap
 
     git_dname = None
 
@@ -387,7 +356,7 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
         right_repo_root = guessed_wrong_repo(io, git_root, fnames, git_dname)
         if right_repo_root:
             # analytics.event("exit", reason="Recursing with correct repo")
-            return main(argv, input, output, right_repo_root, return_coder=return_coder)
+            return main(argv, input, output, right_repo_root)
 
     git_root = setup_git(git_root, io)
     # gitignore checking removed
@@ -427,15 +396,6 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
     #             return 1
     #         alias, model = parts
     #         models.MODEL_ALIASES[alias.strip()] = model.strip()
-
-    # Default model selection - removed
-    selected_model_name = args.model  # Use provided model or None
-    # if not selected_model_name:
-    #     # Error message and analytics event are handled within select_default_model
-    #     # It might have already offered OAuth if no model/keys were found.
-    #     # If it failed here, we exit.
-    #     return 1
-    # args.model = selected_model_name  # Update args with the selected model
 
     # OpenRouter API key check - removed
     # if args.model.startswith("openrouter/") and not os.environ.get("OPENROUTER_API_KEY"):
@@ -524,7 +484,7 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
                     # Use litellm.token_counter for accurate counting
                     # Use a generic model name that should work with litellm
                     return litellm.token_counter(model="gpt-4o", text=text)
-                except Exception as e:
+                except Exception:
                     # Fallback to character-based estimation if litellm fails
                     # Approx 4 characters per token for code
                     return len(text) // 4
@@ -624,15 +584,7 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
             fnames,
             git_dname,
             args.asterismignore,
-            models=main_model.commit_message_models(),
-            # attribute_author=args.attribute_author,
-            # attribute_committer=args.attribute_committer,
-            # attribute_commit_message_author=args.attribute_commit_message_author,
-            # attribute_commit_message_committer=args.attribute_commit_message_committer,
-            # commit_prompt=args.commit_prompt,
             subtree_only=args.subtree_only,
-            # git_commit_verify=args.git_commit_verify,
-            # attribute_co_authored_by=args.attribute_co_authored_by,
         )
     except FileNotFoundError:
         pass
@@ -648,140 +600,36 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
     # else:
     #     analytics.event("no-repo")
 
-    commands = Commands(
-        io,
-        None,
-        # voice_language=args.voice_language,
-        # voice_input_device=args.voice_input_device,
-        # voice_format=args.voice_format,
-        # verify_ssl=args.verify_ssl,
-        # args=args,
-        # parser=parser,
-        # verbose=args.verbose,
-        # editor=args.editor,
-        # original_read_only_fnames=read_only_fnames,
-    )
-
-    summarizer = ChatSummary(
-        # [main_model.weak_model, main_model],
-        [main_model, main_model],
-        # args.max_chat_history_tokens or main_model.max_chat_history_tokens,
-        128000,
-    )
-
-    # if args.cache_prompts and args.map_refresh == "auto":
-    #     args.map_refresh = "files"
-
-    # if not main_model.streaming:
-    #     if args.stream:
-    #         io.tool_warning(
-    #             f"Warning: Streaming is not supported by {main_model.name}. Disabling streaming."
-    #         )
-    #     args.stream = False
-
     if args.map_tokens is None:
-        map_tokens = main_model.get_repo_map_tokens()
+        map_tokens = int(main_model.get_repo_map_tokens())
     else:
         map_tokens = args.map_tokens
 
-    # Track auto-commits configuration
-    # analytics.event("auto_commits", enabled=bool(args.auto_commits))
-
-    try:
-        coder = Coder.create(
-            main_model=main_model,
-            edit_format=None,  # Use default
-            io=io,
-            repo=repo,
-            fnames=fnames,
-            # read_only_fnames=read_only_fnames,
-            # show_diffs=args.show_diffs,
-            # auto_commits=args.auto_commits,
-            # dirty_commits=args.dirty_commits,
-            # dry_run=args.dry_run,
-            map_tokens=map_tokens,
-            verbose=args.verbose,
-            # stream=args.stream,
-            use_git=True,
-            # restore_chat_history=args.restore_chat_history,
-            # auto_lint=args.auto_lint,
-            # auto_test=args.auto_test,
-            # lint_cmds=lint_cmds,
-            # test_cmd=args.test_cmd,
-            commands=commands,
-            summarizer=summarizer,
-            # analytics=analytics,
-            # map_refresh=args.map_refresh,
-            # cache_prompts=args.cache_prompts,
-            # num_cache_warming_pings=args.cache_keepalive_pings,
-            # suggest_shell_commands=args.suggest_shell_commands,
-            # chat_language=args.chat_language,
-            # commit_language=args.commit_language,
-            # detect_urls=args.detect_urls,
-            # auto_copy_context=args.copy_paste,
-            # auto_accept_architect=args.auto_accept_architect,
-            add_gitignore_files=args.add_gitignore_files,
-        )
-    except UnknownEditFormat as err:
-        io.tool_error(str(err))
-        io.offer_url(urls.edit_formats, "Open documentation about edit formats?")
-        # analytics.event("exit", reason="Unknown edit format")
-        return 1
-    except ValueError as err:
-        io.tool_error(str(err))
-        # analytics.event("exit", reason="ValueError during coder creation")
+    if not repo:
+        io.tool_error("No git repository found.")
         return 1
 
-    if return_coder:
-        analytics.event("exit", reason="Returning coder object")
-        return coder
+    # 直接创建 RepoMap（不经过 base_coder）
+    repo_map_obj = RepoMap(
+        map_tokens=map_tokens,
+        root=repo.root,
+        main_model=main_model,
+        io=io,
+        repo_content_prefix="以下是当前代码库的地图摘要\n",
+        verbose=args.verbose,
+    )
 
-    ignores = []
-    if git_root:
-        ignores.append(str(Path(git_root) / ".gitignore"))
-    if args.asterismignore:
-        ignores.append(args.asterismignore)
+    # 获取所有跟踪文件的绝对路径
+    all_abs_files = {str(Path(repo.root) / f) for f in repo.get_tracked_files()}
 
-    # if args.show_prompts:
-    #     coder.cur_messages += [
-    #         dict(role="user", content="Hello!"),
-    #     ]
-    #     messages = coder.format_messages().all_messages()
-    #     utils.show_messages(messages)
-    #     analytics.event("exit", reason="Showed prompts")
-    #     return
-
-    # if args.lint:
-    #     coder.commands.cmd_lint(fnames=fnames)
-
-    # if args.test:
-    #     if not args.test_cmd:
-    #         io.tool_error("No --test-cmd provided.")
-    #         analytics.event("exit", reason="No test command provided")
-    #         return 1
-    #     coder.commands.cmd_test(args.test_cmd)
-    #     if io.placeholder:
-    #         coder.run(io.placeholder)
-
-    # if args.commit:
-    #     if args.dry_run:
-    #         io.tool_output("Dry run enabled, skipping commit.")
-    #     else:
-    #         coder.commands.cmd_commit()
-
-    # if args.lint or args.test or args.commit:
-    #     analytics.event("exit", reason="Completed lint/test/commit")
-    #     return
-
-    # 生成RepoMap文件
-    repo_map = coder.get_repo_map()
+    # 生成 RepoMap（降级尝试）
+    repo_map = repo_map_obj.get_repo_map(set(), all_abs_files)
     if repo_map:
         try:
             output_path = Path(args.output_file)
             output_path.write_text(repo_map, encoding="utf-8")
 
             # 从repo_map中提取统计信息（复用repomap.py的计算结果）
-            import re
             stats_match = re.search(r'RepoMap尺寸统计：(\d+) tokens, (\d+) characters, ([\d.]+) KB', repo_map)
             if stats_match:
                 token_count = stats_match.group(1)
@@ -798,107 +646,6 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
         except Exception as e:
             io.tool_error(f"写入文件失败：{e}")
             return 1
-    return
-
-    if args.apply:
-        content = io.read_text(args.apply)
-        if content is None:
-            analytics.event("exit", reason="Failed to read apply content")
-            return
-        coder.partial_response_content = content
-        # For testing #2879
-        # from repomap.coders.base_coder import all_fences
-        # coder.fence = all_fences[1]
-        coder.apply_updates()
-        analytics.event("exit", reason="Applied updates")
-        return
-
-    if args.apply_clipboard_edits:
-        args.edit_format = main_model.editor_edit_format
-        args.message = "/paste"
-
-    if args.show_release_notes is True:
-        io.tool_output(f"Opening release notes: {urls.release_notes}")
-        io.tool_output()
-        webbrowser.open(urls.release_notes)
-    elif args.show_release_notes is None and is_first_run:
-        io.tool_output()
-        io.offer_url(
-            urls.release_notes,
-            "Would you like to see what's new in this version?",
-            allow_never=False,
-        )
-
-    if git_root and Path.cwd().resolve() != Path(git_root).resolve():
-        io.tool_warning(
-            "Note: in-chat filenames are always relative to the git working dir, not the current"
-            " working dir."
-        )
-
-        io.tool_output(f"Cur working dir: {Path.cwd()}")
-        io.tool_output(f"Git working dir: {git_root}")
-
-    if args.stream and args.cache_prompts:
-        io.tool_warning("Cost estimates may be inaccurate when using streaming and caching.")
-
-    if args.load:
-        commands.cmd_load(args.load)
-
-    if args.message:
-        io.add_to_input_history(args.message)
-        io.tool_output()
-        try:
-            coder.run(with_message=args.message)
-        except SwitchCoder:
-            pass
-        analytics.event("exit", reason="Completed --message")
-        return
-
-    if args.message_file:
-        try:
-            message_from_file = io.read_text(args.message_file)
-            io.tool_output()
-            coder.run(with_message=message_from_file)
-        except FileNotFoundError:
-            io.tool_error(f"Message file not found: {args.message_file}")
-            analytics.event("exit", reason="Message file not found")
-            return 1
-        except IOError as e:
-            io.tool_error(f"Error reading message file: {e}")
-            analytics.event("exit", reason="Message file IO error")
-            return 1
-
-        analytics.event("exit", reason="Completed --message-file")
-        return
-
-    if args.exit:
-        analytics.event("exit", reason="Exit flag set")
-        return
-
-    analytics.event("cli session", main_model=main_model, edit_format=main_model.edit_format)
-
-    while True:
-        try:
-            coder.ok_to_warm_cache = bool(args.cache_keepalive_pings)
-            coder.run()
-            analytics.event("exit", reason="Completed main CLI coder.run")
-            return
-        except SwitchCoder as switch:
-            coder.ok_to_warm_cache = False
-
-            # Set the placeholder if provided
-            if hasattr(switch, "placeholder") and switch.placeholder is not None:
-                io.placeholder = switch.placeholder
-
-            kwargs = dict(io=io, from_coder=coder)
-            kwargs.update(switch.kwargs)
-            if "show_announcements" in kwargs:
-                del kwargs["show_announcements"]
-
-            coder = Coder.create(**kwargs)
-
-            if switch.kwargs.get("show_announcements") is not False:
-                coder.show_announcements()
 
 
 if __name__ == "__main__":

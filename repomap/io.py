@@ -33,10 +33,7 @@ from rich.markdown import Markdown
 from rich.style import Style as RichStyle
 from rich.text import Text
 
-from repomap.mdstream import MarkdownStream
-
 from .dump import dump  # noqa: F401
-from .editor import pipe_editor
 from .utils import is_image_file
 
 # Constants
@@ -594,21 +591,6 @@ class InputOutput:
             "Navigate forward through history"
             event.current_buffer.history_forward()
 
-        @kb.add("c-x", "c-e")
-        def _(event):
-            "Edit current input in external editor (like Bash)"
-            buffer = event.current_buffer
-            current_text = buffer.text
-
-            # Open the editor with the current text
-            edited_text = pipe_editor(input_data=current_text, suffix="md")
-
-            # Replace the buffer with the edited text, strip any trailing newlines
-            buffer.text = edited_text.rstrip("\n")
-
-            # Move cursor to the end of the text
-            buffer.cursor_position = len(buffer.text)
-
         @kb.add("enter", eager=True, filter=~is_searching)
         def _(event):
             "Handle Enter key press"
@@ -1010,15 +992,6 @@ class InputOutput:
 
         style = RichStyle(**style)
         self.console.print(*messages, style=style)
-
-    def get_assistant_mdstream(self):
-        mdargs = dict(
-            style=self.assistant_output_color,
-            code_theme=self.code_theme,
-            inline_code_lexer="text",
-        )
-        mdStream = MarkdownStream(mdargs=mdargs)
-        return mdStream
 
     def assistant_output(self, message, pretty=None):
         if not message:
