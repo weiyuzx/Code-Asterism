@@ -14,29 +14,18 @@ except ImportError:
     git = None
 
 import importlib_resources
-import shtab
-from prompt_toolkit.enums import EditingMode
 
-from repomap import __version__, models, urls, utils
-from repomap.analytics import Analytics
+from repomap import __version__, models, urls
 from repomap.args import get_parser
 from repomap.coders import Coder
 from repomap.coders.base_coder import UnknownEditFormat
 from repomap.commands import Commands, SwitchCoder
-from repomap.copypaste import ClipboardWatcher
-from repomap.deprecated import handle_deprecated_model_args
-from repomap.format_settings import format_settings, scrub_sensitive_info
 from repomap.history import ChatSummary
 from repomap.io import InputOutput
 from repomap.llm import litellm  # noqa: F401; properly init litellm on launch
 from repomap.models import ModelSettings
-from repomap.onboarding import offer_openrouter_oauth, select_default_model
 from repomap.repo import ANY_GIT_ERROR, GitRepo
 from repomap.report import report_uncaught_exceptions
-from repomap.versioncheck import check_version, install_from_main_branch, install_upgrade
-from repomap.watch import FileWatcher
-
-from .dump import dump  # noqa: F401
 
 
 def check_config_files_for_yes(config_files):
@@ -202,76 +191,6 @@ def check_gitignore(git_root, io, ask=True):
         )
         for pattern in patterns_to_add:
             io.tool_output(f"  {pattern}")
-
-
-def check_streamlit_install(io):
-    return utils.check_pip_install_extra(
-        io,
-        "streamlit",
-        "You need to install the aider browser feature",
-        ["aider-chat[browser]"],
-    )
-
-
-def write_streamlit_credentials():
-    from streamlit.file_util import get_streamlit_file_path
-
-    # See https://github.com/Aider-AI/aider/issues/772
-
-    credential_path = Path(get_streamlit_file_path()) / "credentials.toml"
-    if not os.path.exists(credential_path):
-        empty_creds = '[general]\nemail = ""\n'
-
-        os.makedirs(os.path.dirname(credential_path), exist_ok=True)
-        with open(credential_path, "w") as f:
-            f.write(empty_creds)
-    else:
-        print("Streamlit credentials already exist.")
-
-
-def launch_gui(args):
-    from streamlit.web import cli
-
-    from repomap import gui
-
-    print()
-    print("CONTROL-C to exit...")
-
-    # Necessary so streamlit does not prompt the user for an email address.
-    write_streamlit_credentials()
-
-    target = gui.__file__
-
-    st_args = ["run", target]
-
-    st_args += [
-        "--browser.gatherUsageStats=false",
-        "--runner.magicEnabled=false",
-        "--server.runOnSave=false",
-    ]
-
-    # https://github.com/Aider-AI/aider/issues/2193
-    is_dev = "-dev" in str(__version__)
-
-    if is_dev:
-        print("Watching for file changes.")
-    else:
-        st_args += [
-            "--global.developmentMode=false",
-            "--server.fileWatcherType=none",
-            "--client.toolbarMode=viewer",  # minimal?
-        ]
-
-    st_args += ["--"] + args
-
-    cli.main(st_args)
-
-    # from click.testing import CliRunner
-    # runner = CliRunner()
-    # from streamlit.web import bootstrap
-    # bootstrap.load_config_options(flag_options={})
-    # cli.main_run(target, args)
-    # sys.argv = ['streamlit', 'run', '--'] + args
 
 
 def parse_lint_cmds(lint_cmds, io):
@@ -601,20 +520,6 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
     #
     #         analytics.save_data()
     #         io.tool_output()
-    #
-    #     # This is a no-op if the user has opted out
-    #     analytics.enable()
-    #
-    # analytics.event("launched")
-    #
-    # if args.gui and not return_coder:
-    #     if not check_streamlit_install(io):
-    #         analytics.event("exit", reason="Streamlit not installed")
-    #         return
-    #     analytics.event("gui session")
-    #     launch_gui(argv)
-    #     analytics.event("exit", reason="GUI session ended")
-    #     return
 
     # File handling for repomap
     fnames = []  # asterism doesn't use file focusing like aider
@@ -630,25 +535,6 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
         if right_repo_root:
             # analytics.event("exit", reason="Recursing with correct repo")
             return main(argv, input, output, right_repo_root, return_coder=return_coder)
-
-    # Version checking - removed
-    # if args.just_check_update:
-    #     update_available = check_version(io, just_check=True, verbose=args.verbose)
-    #     analytics.event("exit", reason="Just checking update")
-    #     return 0 if not update_available else 1
-    #
-    # if args.install_main_branch:
-    #     success = install_from_main_branch(io)
-    #     analytics.event("exit", reason="Installed main branch")
-    #     return 0 if success else 1
-    #
-    # if args.upgrade:
-    #     success = install_upgrade(io)
-    #     analytics.event("exit", reason="Upgrade completed")
-    #     return 0 if success else 1
-    #
-    # if args.check_update:
-    #     check_version(io, verbose=args.verbose)
 
     git_root = setup_git(git_root, io)
     # gitignore checking removed
@@ -1002,22 +888,6 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
         ignores.append(str(Path(git_root) / ".gitignore"))
     if args.asterismignore:
         ignores.append(args.asterismignore)
-
-    # if args.watch_files:
-    #     file_watcher = FileWatcher(
-    #         coder,
-    #         gitignores=ignores,
-    #         verbose=args.verbose,
-    #         analytics=analytics,
-    #         root=str(Path.cwd()) if args.subtree_only else None,
-    #     )
-    #     coder.file_watcher = file_watcher
-
-    # if args.copy_paste:
-    #     analytics.event("copy-paste mode")
-    #     ClipboardWatcher(coder.io, verbose=args.verbose)
-
-    # coder.show_announcements()  # Not needed for repomap
 
     # if args.show_prompts:
     #     coder.cur_messages += [

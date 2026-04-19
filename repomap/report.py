@@ -8,7 +8,6 @@ import webbrowser
 
 from repomap import __version__
 from repomap.urls import github_issues
-from repomap.versioncheck import VERSION_CHECK_FNAME
 
 FENCE = "`" * 3
 
@@ -99,12 +98,14 @@ def exception_handler(exc_type, exc_value, exc_traceback):
     # We don't want any more exceptions
     sys.excepthook = None
 
-    # Check if VERSION_CHECK_FNAME exists and delete it if so
+    # Clean up version check file if it exists
     try:
-        if VERSION_CHECK_FNAME.exists():
-            VERSION_CHECK_FNAME.unlink()
+        from pathlib import Path
+        vcf = Path.home() / ".asterism" / "version-check"
+        if vcf.exists():
+            vcf.unlink()
     except Exception:
-        pass  # Swallow any errors
+        pass
 
     # Format the traceback
     tb_lines = traceback.format_exception(exc_type, exc_value, exc_traceback)
