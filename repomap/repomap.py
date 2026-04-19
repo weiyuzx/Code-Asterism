@@ -1,7 +1,5 @@
-import colorsys
 import math
 import os
-import random
 import shutil
 import sqlite3
 import sys
@@ -782,24 +780,6 @@ class RepoMap:
         return output
 
 
-def find_src_files(directory):
-    if not os.path.isdir(directory):
-        return [directory]
-
-    src_files = []
-    for root, dirs, files in os.walk(directory):
-        for file in files:
-            src_files.append(os.path.join(root, file))
-    return src_files
-
-
-def get_random_color():
-    hue = random.random()
-    r, g, b = [int(x * 255) for x in colorsys.hsv_to_rgb(hue, 1, 0.75)]
-    res = f"#{r:02x}{g:02x}{b:02x}"
-    return res
-
-
 def get_scm_fname(lang):
     # Load the tags queries
     if USING_TSL_PACK:
@@ -825,41 +805,3 @@ def get_scm_fname(lang):
         )
     except KeyError:
         return
-
-
-def get_supported_languages_md():
-    from grep_ast.parsers import PARSERS
-
-    res = """
-| Language | File extension | Repo map | Linter |
-|:--------:|:--------------:|:--------:|:------:|
-"""
-    data = sorted((lang, ex) for ex, lang in PARSERS.items())
-
-    for lang, ext in data:
-        fn = get_scm_fname(lang)
-        repo_map = "✓" if Path(fn).exists() else ""
-        linter_support = "✓"
-        res += f"| {lang:20} | {ext:20} | {repo_map:^8} | {linter_support:^6} |\n"
-
-    res += "\n"
-
-    return res
-
-
-if __name__ == "__main__":
-    fnames = sys.argv[1:]
-
-    chat_fnames = []
-    other_fnames = []
-    for fname in sys.argv[1:]:
-        if Path(fname).is_dir():
-            chat_fnames += find_src_files(fname)
-        else:
-            chat_fnames.append(fname)
-
-    rm = RepoMap(root=".")
-    repo_map = rm.get_ranked_tags_map(chat_fnames, other_fnames)
-
-    dump(len(repo_map))
-    print(repo_map)

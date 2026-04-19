@@ -2,8 +2,6 @@ import json
 import os
 import re
 import sys
-import threading
-import traceback
 import webbrowser
 from dataclasses import fields
 from pathlib import Path
@@ -12,8 +10,6 @@ try:
     import git
 except ImportError:
     git = None
-
-import importlib_resources
 
 from repomap import __version__, models, urls
 from repomap.args import get_parser
@@ -192,149 +188,6 @@ def check_gitignore(git_root, io, ask=True):
         for pattern in patterns_to_add:
             io.tool_output(f"  {pattern}")
 
-
-def parse_lint_cmds(lint_cmds, io):
-    err = False
-    res = dict()
-    for lint_cmd in lint_cmds:
-        if re.match(r"^[a-z]+:.*", lint_cmd):
-            pieces = lint_cmd.split(":")
-            lang = pieces[0]
-            cmd = lint_cmd[len(lang) + 1 :]
-            lang = lang.strip()
-        else:
-            lang = None
-            cmd = lint_cmd
-
-        cmd = cmd.strip()
-
-        if cmd:
-            res[lang] = cmd
-        else:
-            io.tool_error(f'Unable to parse --lint-cmd "{lint_cmd}"')
-            io.tool_output('The arg should be "language: cmd --args ..."')
-            io.tool_output('For example: --lint-cmd "python: flake8 --select=E9"')
-            err = True
-    if err:
-        return
-    return res
-
-
-def generate_search_path_list(default_file, git_root, command_line_file):
-    files = []
-    files.append(Path.home() / default_file)  # homedir
-    if git_root:
-        files.append(Path(git_root) / default_file)  # git root
-    files.append(default_file)
-    if command_line_file:
-        files.append(command_line_file)
-
-    resolved_files = []
-    for fn in files:
-        try:
-            resolved_files.append(Path(fn).resolve())
-        except OSError:
-            pass
-
-    files = resolved_files
-    files.reverse()
-    uniq = []
-    for fn in files:
-        if fn not in uniq:
-            uniq.append(fn)
-    uniq.reverse()
-    files = uniq
-    files = list(map(str, files))
-    files = list(dict.fromkeys(files))
-
-    return files
-
-
-def register_models(git_root, model_settings_fname, io, verbose=False):
-    model_settings_files = generate_search_path_list(
-        ".aider.model.settings.yml", git_root, model_settings_fname
-    )
-
-    try:
-        files_loaded = models.register_models(model_settings_files)
-        if len(files_loaded) > 0:
-            if verbose:
-                io.tool_output("Loaded model settings from:")
-                for file_loaded in files_loaded:
-                    io.tool_output(f"  - {file_loaded}")  # noqa: E221
-        elif verbose:
-            io.tool_output("No model settings files loaded")
-    except Exception as e:
-        io.tool_error(f"Error loading aider model settings: {e}")
-        return 1
-
-    if verbose:
-        io.tool_output("Searched for model settings files:")
-        for file in model_settings_files:
-            io.tool_output(f"  - {file}")
-
-    return None
-
-
-def register_litellm_models(git_root, model_metadata_fname, io, verbose=False):
-    model_metadata_files = []
-
-    # Add the resource file path
-    resource_metadata = importlib_resources.files("aider.resources").joinpath("model-metadata.json")
-    model_metadata_files.append(str(resource_metadata))
-
-    model_metadata_files += generate_search_path_list(
-        ".aider.model.metadata.json", git_root, model_metadata_fname
-    )
-
-    try:
-        model_metadata_files_loaded = models.register_litellm_models(model_metadata_files)
-        if len(model_metadata_files_loaded) > 0 and verbose:
-            io.tool_output("Loaded model metadata from:")
-            for model_metadata_file in model_metadata_files_loaded:
-                io.tool_output(f"  - {model_metadata_file}")  # noqa: E221
-    except Exception as e:
-        io.tool_error(f"Error loading model metadata models: {e}")
-        return 1
-
-
-def sanity_check_repo(repo, io):
-    if not repo:
-        return True
-
-    if not repo.repo.working_tree_dir:
-        io.tool_error("The git repo does not seem to have a working tree?")
-        return False
-
-    bad_ver = False
-    try:
-        repo.get_tracked_files()
-        if not repo.git_repo_error:
-            return True
-        error_msg = str(repo.git_repo_error)
-    except UnicodeDecodeError as exc:
-        error_msg = (
-            "Failed to read the Git repository. This issue is likely caused by a path encoded "
-            f'in a format different from the expected encoding "{sys.getfilesystemencoding()}".\n'
-            f"Internal error: {str(exc)}"
-        )
-    except ANY_GIT_ERROR as exc:
-        error_msg = str(exc)
-        bad_ver = "version in (1, 2)" in error_msg
-    except AssertionError as exc:
-        error_msg = str(exc)
-        bad_ver = True
-
-    if bad_ver:
-        io.tool_error("Aider only works with git repos with version number 1 or 2.")
-        io.tool_output("You may be able to convert your repo: git update-index --index-version=2")
-        io.tool_output("Or run aider --no-git to proceed without using git.")
-        io.offer_url(urls.git_index_version, "Open documentation url for more info?")
-        return False
-
-    io.tool_error("Unable to read git repository, it may be corrupt?")
-    io.tool_output(error_msg)
-    return False
 
 
 def main(argv=None, input=None, output=None, force_git_root=None, return_coder=False):
@@ -1046,95 +899,6 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
 
             if switch.kwargs.get("show_announcements") is not False:
                 coder.show_announcements()
-
-
-def is_first_run_of_new_version(io, verbose=False):
-    """Check if this is the first run of a new version/executable combination"""
-    installs_file = Path.home() / ".aider" / "installs.json"
-    key = (__version__, sys.executable)
-
-    # Never show notes for .dev versions
-    if ".dev" in __version__:
-        return False
-
-    if verbose:
-        io.tool_output(
-            f"Checking imports for version {__version__} and executable {sys.executable}"
-        )
-        io.tool_output(f"Installs file: {installs_file}")
-
-    try:
-        if installs_file.exists():
-            with open(installs_file, "r") as f:
-                installs = json.load(f)
-            if verbose:
-                io.tool_output("Installs file exists and loaded")
-        else:
-            installs = {}
-            if verbose:
-                io.tool_output("Installs file does not exist, creating new dictionary")
-
-        is_first_run = str(key) not in installs
-
-        if is_first_run:
-            installs[str(key)] = True
-            installs_file.parent.mkdir(parents=True, exist_ok=True)
-            with open(installs_file, "w") as f:
-                json.dump(installs, f, indent=4)
-
-        return is_first_run
-
-    except Exception as e:
-        io.tool_warning(f"Error checking version: {e}")
-        if verbose:
-            io.tool_output(f"Full exception details: {traceback.format_exc()}")
-        return True  # Safer to assume it's a first run if we hit an error
-
-
-def check_and_load_imports(io, is_first_run, verbose=False):
-    try:
-        if is_first_run:
-            if verbose:
-                io.tool_output(
-                    "First run for this version and executable, loading imports synchronously"
-                )
-            try:
-                load_slow_imports(swallow=False)
-            except Exception as err:
-                io.tool_error(str(err))
-                io.tool_output("Error loading required imports. Did you install aider properly?")
-                io.offer_url(urls.install_properly, "Open documentation url for more info?")
-                sys.exit(1)
-
-            if verbose:
-                io.tool_output("Imports loaded and installs file updated")
-        else:
-            if verbose:
-                io.tool_output("Not first run, loading imports in background thread")
-            thread = threading.Thread(target=load_slow_imports)
-            thread.daemon = True
-            thread.start()
-
-    except Exception as e:
-        io.tool_warning(f"Error in loading imports: {e}")
-        if verbose:
-            io.tool_output(f"Full exception details: {traceback.format_exc()}")
-
-
-def load_slow_imports(swallow=True):
-    # These imports are deferred in various ways to
-    # improve startup time.
-    # This func is called either synchronously or in a thread
-    # depending on whether it's been run before for this version and executable.
-
-    try:
-        import httpx  # noqa: F401
-        import litellm  # noqa: F401
-        import networkx  # noqa: F401
-        import numpy  # noqa: F401
-    except Exception as e:
-        if not swallow:
-            raise e
 
 
 if __name__ == "__main__":

@@ -1090,30 +1090,6 @@ def register_models(model_settings_fnames):
     return files_loaded
 
 
-def register_litellm_models(model_fnames):
-    files_loaded = []
-    for model_fname in model_fnames:
-        if not os.path.exists(model_fname):
-            continue
-
-        try:
-            data = Path(model_fname).read_text()
-            if not data.strip():
-                continue
-            model_def = json5.loads(data)
-            if not model_def:
-                continue
-
-            # Defer registration with litellm to faster path.
-            model_info_manager.local_model_metadata.update(model_def)
-        except Exception as e:
-            raise Exception(f"Error loading model definition from {model_fname}: {e}")
-
-        files_loaded.append(model_fname)
-
-    return files_loaded
-
-
 def validate_variables(vars):
     missing = []
     for var in vars:
