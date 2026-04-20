@@ -29,12 +29,6 @@ asterism = "repomap.main:main"
 [tool.setuptools.dynamic]
 dependencies = { file = "requirements.txt" }
 
-[tool.setuptools.dynamic.optional-dependencies]
-# dev = { file = "requirements/requirements-dev.txt" }
-# help = { file = "requirements/requirements-help.txt" }
-# browser = { file = "requirements/requirements-browser.txt" }
-# playwright = { file = "requirements/requirements-playwright.txt" }
-
 [tool.setuptools]
 include-package-data = true
 
@@ -49,5 +43,5 @@ build-backend = "setuptools.build_meta"
 write_to = "repomap/_version.py"
 
 [tool.codespell]
-skip = "*.svg,Gemfile.lock,tests/fixtures/*,repomap/docs/*"
+skip = "*.svg,tests/fixtures/*"
 write-changes = true

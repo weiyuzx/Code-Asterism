@@ -1,18 +1,4 @@
 global-exclude .DS_Store
 
-recursive-exclude repomap/docs/examples *
-recursive-exclude repomap/docs/_posts *
-
-exclude repomap/docs/HISTORY.md
-exclude repomap/docs/benchmarks*.md
-exclude repomap/docs/ctags.md
-exclude repomap/docs/unified-diffs.md
-
-recursive-exclude repomap/docs/leaderboards *
-recursive-exclude repomap/docs/assets *
-recursive-exclude repomap/docs *.js
-recursive-exclude repomap/docs *.html
-recursive-exclude repomap/docs *.yml
-
 include repomap/queries/**/*.scm
 graft repomap/queries
