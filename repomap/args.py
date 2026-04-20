@@ -41,7 +41,7 @@ def get_parser(default_config_files, git_root):
             asterisk_config_files.append(git_conf)
 
     parser = configargparse.ArgumentParser(
-        description="Asterism 可以使用 AST 解析和 PageRank 排序生成 RepoMap 代码仓库地图",
+        description="Code-Asterism 可以使用 AST 解析和 PageRank 排序生成 RepoMap 代码仓库地图",
         add_config_file_help=True,
         default_config_files=asterisk_config_files,
         config_file_parser_class=configargparse.YAMLConfigFileParser,
@@ -118,7 +118,7 @@ def get_parser(default_config_files, git_root):
 
 def get_sample_config():
     """Return sample .asterism.conf.yml file content."""
-    return """# Asterism configuration file
+    return """# Code-Asterism configuration file
 # Create this file as .asterism.conf.yml in your project root
 
 # Repomap settings

@@ -1,7 +1,7 @@
 
 [project]
-name = "asterism"
-description = "Asterism generates repository maps using AST parsing and PageRank ranking"
+name = "code-asterism"
+description = "Code-Asterism generates repository maps using AST parsing and PageRank ranking"
 readme = "README.md"
 classifiers = [
     "Development Status :: 4 - Beta",
