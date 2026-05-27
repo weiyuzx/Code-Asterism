@@ -728,7 +728,7 @@ class RepoMap:
                 margin=0,
                 mark_lois=False,
                 loi_pad=0,
-                # header_max=30,
+                header_max=3,
                 show_top_of_file_parent_scope=False,
             )
             self.tree_context_cache[rel_fname] = {"context": context, "mtime": mtime}

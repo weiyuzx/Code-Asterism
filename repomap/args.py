@@ -64,9 +64,9 @@ def get_parser(default_config_files, git_root):
     group.add_argument(
         "output_file",
         nargs="?",
-        default="code-asterism.md",
+        default="repo-map.md",
         metavar="REPO_MAP_FILE",
-        help="生成的 RepoMap 文件路径（默认：code-asterism.md）",
+        help="生成的 RepoMap 文件路径（默认：repo-map.md）",
     )
     group.add_argument(
         "--verbose",
