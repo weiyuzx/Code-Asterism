@@ -10,7 +10,37 @@ from importlib import resources
 from pathlib import Path
 
 from diskcache import Cache
-from grep_ast import TreeContext, filename_to_lang
+from grep_ast import TreeContext as _TreeContext, filename_to_lang
+
+
+class TreeContext(_TreeContext):
+    """Override format() to skip ⋮ separator lines."""
+
+    def format(self):
+        if not self.show_lines:
+            return ""
+
+        output = ""
+        if self.color:
+            output += "\033[0m\n"
+
+        for i, line in enumerate(self.lines):
+            if i not in self.show_lines:
+                continue
+
+            if i in self.lines_of_interest and self.mark_lois:
+                spacer = "█"
+                if self.color:
+                    spacer = f"\033[31m{spacer}\033[0m"
+            else:
+                spacer = "│"
+
+            line_output = f"{spacer}{self.output_lines.get(i, line)}"
+            if self.line_number:
+                line_output = f"{i + 1: 3}" + line_output
+            output += line_output + "\n"
+
+        return output
 from pygments.lexers import guess_lexer_for_filename
 from pygments.token import Token
 from tqdm import tqdm
@@ -722,13 +752,13 @@ class RepoMap:
                 rel_fname,
                 code,
                 color=False,
-                line_number=False,
+                line_number=True,
                 child_context=False,
                 last_line=False,
                 margin=0,
                 mark_lois=False,
                 loi_pad=0,
-                header_max=3,
+                header_max=1,
                 show_top_of_file_parent_scope=False,
             )
             self.tree_context_cache[rel_fname] = {"context": context, "mtime": mtime}
