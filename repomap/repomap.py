@@ -13,8 +13,189 @@ from diskcache import Cache
 from grep_ast import TreeContext as _TreeContext, filename_to_lang
 
 
+_LANG_DEF_TYPES = {
+    "python": frozenset({
+        "class_definition", "function_definition",
+    }),
+    "javascript": frozenset({
+        "arrow_function", "class_declaration", "function_declaration",
+        "function_expression", "method_definition", "variable_declarator",
+    }),
+    "typescript": frozenset({
+        "abstract_class_declaration", "class_declaration", "enum_declaration",
+        "function_declaration", "interface_declaration", "method_definition",
+        "method_signature", "type_alias_declaration",
+    }),
+    "java": frozenset({
+        "class_declaration", "interface_declaration", "method_declaration",
+    }),
+    "go": frozenset({
+        "function_declaration", "method_declaration", "type_spec",
+    }),
+    "rust": frozenset({
+        "enum_item", "function_item", "impl_item", "mod_item",
+        "struct_item", "trait_item", "type_item", "union_item",
+    }),
+    "c": frozenset({
+        "enum_specifier", "function_definition", "struct_specifier",
+        "type_definition", "union_specifier",
+    }),
+    "cpp": frozenset({
+        "class_specifier", "enum_specifier", "function_definition",
+        "namespace_definition", "struct_specifier", "template_declaration",
+        "type_definition",
+    }),
+    "csharp": frozenset({
+        "class_declaration", "interface_declaration", "method_declaration",
+        "namespace_declaration",
+    }),
+    "ruby": frozenset({
+        "class", "method", "module",
+    }),
+    "kotlin": frozenset({
+        "class_declaration", "function_declaration", "object_declaration",
+    }),
+    "swift": frozenset({
+        "class_declaration", "function_declaration", "protocol_declaration",
+    }),
+    "php": frozenset({
+        "class_declaration", "function_definition", "interface_declaration",
+        "method_declaration",
+    }),
+    "scala": frozenset({
+        "class_definition", "enum_definition", "function_definition",
+        "object_definition", "trait_definition",
+    }),
+    "lua": frozenset({
+        "function_declaration",
+    }),
+    "julia": frozenset({
+        "macro_definition", "module_definition", "struct_definition",
+    }),
+    "dart": frozenset({
+        "class_definition", "enum_declaration", "extension_declaration",
+        "function_signature", "method_signature", "mixin_declaration",
+        "type_alias",
+    }),
+    "r": frozenset({
+        "binary_operator",
+    }),
+    "fortran": frozenset({
+        "function_statement", "module_statement",
+        "program_statement", "subroutine_statement",
+    }),
+    "solidity": frozenset({
+        "contract_declaration", "enum_declaration", "event_definition",
+        "function_definition", "interface_declaration", "library_declaration",
+        "struct_declaration",
+    }),
+    "ocaml": frozenset({
+        "class_binding", "external", "let_binding", "method_definition",
+        "module_binding", "module_type_definition",
+    }),
+    "elixir": frozenset({
+        "call",
+    }),
+    "elm": frozenset({
+        "type_declaration", "value_declaration",
+    }),
+    "gleam": frozenset({
+        "external_function", "function", "type_definition",
+    }),
+    "matlab": frozenset({
+        "class_definition", "function_definition",
+    }),
+    "d": frozenset({
+        "class_declaration", "enum_declaration", "function_declaration",
+        "interface_declaration", "struct_declaration", "union_declaration",
+    }),
+    "pony": frozenset({
+        "actor_definition", "behavior", "constructor",
+        "interface_definition", "method", "primitive_definition",
+        "struct_definition", "trait_definition",
+    }),
+    "commonlisp": frozenset({
+        "defun_header",
+    }),
+    "elisp": frozenset({
+        "function_definition", "macro_definition",
+    }),
+    "haskell": frozenset({
+        "data_type", "function", "module",
+    }),
+    "hcl": frozenset({
+        "block",
+    }),
+    "ocaml_interface": frozenset({
+        "class_binding", "method_specification", "module_binding",
+        "type_binding", "value_specification",
+    }),
+    "zig": frozenset({
+        "ContainerDecl", "FnProto",
+    }),
+    "properties": frozenset({
+        "property",
+    }),
+    "udev": frozenset({
+        "assignment",
+    }),
+    "clojure": frozenset({
+        "list_lit",
+    }),
+    "racket": frozenset({
+        "list",
+    }),
+    "arduino": frozenset({
+        "function_definition",
+    }),
+    "chatito": frozenset({
+        "intent_def", "slot_def", "alias_def",
+    }),
+}
+
+
 class TreeContext(_TreeContext):
-    """Override format() to skip ⋮ separator lines."""
+    """Override walk_tree() to only record definition nodes in scopes/header,
+    and format() to skip ⋮ separator lines."""
+
+    def __init__(self, filename, code, **kwargs):
+        lang = filename_to_lang(filename)
+        self._def_types = _LANG_DEF_TYPES.get(lang, frozenset())
+        super().__init__(filename, code, **kwargs)
+
+    def walk_tree(self, node, depth=0):
+        start = node.start_point
+        end = node.end_point
+
+        start_line = start[0]
+        end_line = end[0]
+        size = end_line - start_line
+
+        self.nodes[start_line].append(node)
+
+        if self.verbose and node.is_named:
+            print(
+                "   " * depth,
+                node.type,
+                f"{start_line}-{end_line}={size + 1}",
+                node.text.splitlines()[0],
+                self.lines[start_line],
+            )
+
+        if node.type in self._def_types:
+            if size:
+                self.header[start_line].append((size, start_line, end_line))
+
+            for i in range(start_line, end_line + 1):
+                self.scopes[i].add(start_line)
+
+        for child in node.children:
+            self.walk_tree(child, depth + 1)
+
+        return start_line, end_line
+
+    def close_small_gaps(self):
+        pass
 
     def format(self):
         if not self.show_lines:
@@ -753,6 +934,7 @@ class RepoMap:
                 code,
                 color=False,
                 line_number=True,
+                parent_context=True,
                 child_context=False,
                 last_line=False,
                 margin=0,
